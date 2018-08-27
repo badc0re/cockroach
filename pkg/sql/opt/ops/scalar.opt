@@ -116,6 +116,11 @@ define Tuple {
     Typ   Type
 }
 
+[Scalar]
+define Collate {
+    Expr Expr
+}
+
 # Projections is a set of typed scalar expressions that will become output
 # columns for a containing Project operator. 
 #

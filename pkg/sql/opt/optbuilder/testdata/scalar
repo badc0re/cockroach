@@ -673,7 +673,7 @@ concat [type=jsonb]
  ├── variable: @1 [type=jsonb]
  └── variable: @2 [type=jsonb]
 
-build-scalar allow-unsupported
+build-scalar
 'hello' COLLATE en
 ----
 unsupported-expr: 'hello' COLLATE en [type=collatedstring{en}]

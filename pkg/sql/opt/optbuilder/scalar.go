@@ -402,6 +402,9 @@ func (b *Builder) buildScalarHelper(
 	case tree.Datum:
 		out = b.buildDatum(t)
 
+	case *tree.CollateExpr:
+		out = b.buildCollateScalar(t, inScope)
+
 	default:
 		if b.AllowUnsupportedExpr {
 			out = b.factory.ConstructUnsupportedExpr(b.factory.InternTypedExpr(scalar))
@@ -411,6 +414,12 @@ func (b *Builder) buildScalarHelper(
 	}
 
 	return b.finishBuildScalar(scalar, out, label, inScope, outScope)
+}
+
+func (b *Builder) buildCollateScalar(t *tree.CollateExpr), inScope *scope) memo.GroupID {
+	expr := b.buildScalarHelper(t.(tree.TypedExpr), "", inScope, nil)
+	out := b.factory.ConstructCollateScalar(expr)
+	return out
 }
 
 func (b *Builder) hasSubOperator(t *tree.ComparisonExpr) bool {
