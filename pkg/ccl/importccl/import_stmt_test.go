@@ -586,6 +586,17 @@ COPY t (a, b, c) FROM stdin;
 			typ:    "CSV",
 			err:    `"s" not found`,
 		},
+		{
+			name:   "create with missing",
+			create: `i int`,
+			typ:    "PGDUMP",
+			err:    "blah",
+		},
+		{
+			name: "no create with missing",
+			typ:  "TABLE t FROM PGDUMP",
+			err:  `table "t" not found in file`,
+		},
 	}
 
 	var dataString string

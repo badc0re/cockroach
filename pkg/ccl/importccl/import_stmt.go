@@ -69,26 +69,32 @@ const (
 	pgMaxRowSize = "max_row_size"
 )
 
-var importOptionExpectValues = map[string]bool{
-	csvDelimiter: true,
-	csvComment:   true,
-	csvNullIf:    true,
-	csvSkip:      true,
+var (
+	importOptionExpectValues = map[string]bool{
+		csvDelimiter: true,
+		csvComment:   true,
+		csvNullIf:    true,
+		csvSkip:      true,
 
-	mysqlOutfileRowSep:   true,
-	mysqlOutfileFieldSep: true,
-	mysqlOutfileEnclose:  true,
-	mysqlOutfileEscape:   true,
+		mysqlOutfileRowSep:   true,
+		mysqlOutfileFieldSep: true,
+		mysqlOutfileEnclose:  true,
+		mysqlOutfileEscape:   true,
 
-	importOptionTransform:  true,
-	importOptionSSTSize:    true,
-	importOptionDecompress: true,
-	importOptionOversample: true,
+		importOptionTransform:  true,
+		importOptionSSTSize:    true,
+		importOptionDecompress: true,
+		importOptionOversample: true,
 
-	importOptionSkipFKs: false,
+		importOptionSkipFKs: false,
 
-	pgMaxRowSize: true,
-}
+		pgMaxRowSize: true,
+	}
+	importBundleFormats = map[string]bool{
+		"PGDUMP":    true,
+		"MYSQLDUMP": true,
+	}
+)
 
 const (
 	// We need to choose arbitrary database and table IDs. These aren't important,
@@ -439,6 +445,10 @@ func importPlanHook(
 	importStmt, ok := stmt.(*tree.Import)
 	if !ok {
 		return nil, nil, nil, nil
+	}
+
+	if !importStmt.Bundle && importBundleFormats[importStmt.FileFormat] {
+		return nil, nil, nil, errors.Errorf("%s doesn't allow specifying table schemas in the IMPORT statement", importStmt.FileFormat)
 	}
 
 	filesFn, err := p.TypeAsStringArray(importStmt.Files, "IMPORT")
