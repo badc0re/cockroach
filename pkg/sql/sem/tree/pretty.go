@@ -16,7 +16,9 @@ package tree
 
 import (
 	"fmt"
+	"os"
 	"strings"
+	"sync"
 
 	"github.com/cockroachdb/cockroach/pkg/sql/coltypes"
 	"github.com/cockroachdb/cockroach/pkg/util/pretty"
@@ -101,6 +103,9 @@ func (p *PrettyCfg) Pretty(stmt NodeFormatter) string {
 	return pretty.Pretty(doc, p.LineWidth, p.UseTabs, p.TabWidth)
 }
 
+var unk = map[string]bool{}
+var unklock sync.Mutex
+
 // Doc converts f (generally a Statement) to a pretty.Doc. If f does not have a
 // native conversion, its .Format representation is used as a simple Text Doc.
 func (p *PrettyCfg) Doc(f NodeFormatter) pretty.Doc {
@@ -108,6 +113,25 @@ func (p *PrettyCfg) Doc(f NodeFormatter) pretty.Doc {
 		doc := f.doc(p)
 		return doc
 	}
+	func() {
+		unklock.Lock()
+		defer unklock.Unlock()
+		s := fmt.Sprintf("%T", f)
+		if unk[s] {
+			return
+		}
+		unk[s] = true
+		ff, err := os.OpenFile("unk.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			panic(err)
+		}
+		if _, err := fmt.Fprintf(ff, "%T: %s\n", f, f); err != nil {
+			panic(err)
+		}
+		if err := ff.Close(); err != nil {
+			panic(err)
+		}
+	}()
 	return p.docAsString(f)
 }
 
