@@ -30,6 +30,8 @@ import (
 	"unicode/utf8"
 )
 
+//go:generate stringer -type itemType -trimprefix item
+
 // item represents a token or text string returned from the scanner.
 type item struct {
 	typ itemType // The type of this item.
@@ -42,11 +44,11 @@ func (i item) String() string {
 	case i.typ == itemEOF:
 		return "EOF"
 	case i.typ == itemError:
-		return i.val
+		return fmt.Sprintf("ERROR: %s", i.val)
 	case len(i.val) > 10:
-		return fmt.Sprintf("%.10q...", i.val)
+		//return fmt.Sprintf("%s: %.10q... (%d)", i.typ, i.val, len(i.val)-10)
 	}
-	return fmt.Sprintf("%q", i.val)
+	return fmt.Sprintf("%s: %q", i.typ, i.val)
 }
 
 // itemType identifies the type of lex items.
@@ -59,6 +61,7 @@ const (
 	itemPct
 	itemDoublePct
 	itemIdent
+	itemIdentColon
 	itemColon
 	itemLiteral
 	itemExpr
@@ -81,6 +84,7 @@ type lexer struct {
 	width   Pos       // width of last rune read from input
 	lastPos Pos       // position of most recent item returned by nextItem
 	items   chan item // channel of scanned items
+	trim    bool
 }
 
 // next returns the next rune in the input.
@@ -109,7 +113,11 @@ func (l *lexer) backup() {
 
 // emit passes an item back to the client.
 func (l *lexer) emit(t itemType) {
-	l.items <- item{t, l.start, l.input[l.start:l.pos]}
+	s := l.input[l.start:l.pos]
+	if l.trim {
+		s = strings.TrimSpace(s)
+	}
+	l.items <- item{t, l.start, s}
 	l.start = l.pos
 }
 
@@ -134,7 +142,10 @@ func (l *lexer) errorf(format string, args ...interface{}) stateFn {
 
 // nextItem returns the next item from the input.
 func (l *lexer) nextItem() item {
-	i := <-l.items
+	i, ok := <-l.items
+	if !ok {
+		return item{itemError, l.start, ""}
+	}
 	l.lastPos = i.pos
 	return i
 }
@@ -155,6 +166,7 @@ func (l *lexer) run() {
 	for l.state = lexStart; l.state != nil; {
 		l.state = l.state(l)
 	}
+	close(l.items)
 }
 
 // state functions
@@ -168,14 +180,15 @@ Loop:
 		case r == '%':
 			return lexPct
 		case r == '\n':
-			l.emit(itemNL)
+			//l.emit(itemNL)
+			l.ignore()
 		case r == ':':
 			l.emit(itemColon)
 		case r == '|':
 			l.emit(itemPipe)
 		case r == '{':
 			return lexExpr
-		case isSpace(r):
+		case isSpace(r) || r == ';':
 			l.ignore()
 		case isIdent(r):
 			return lexIdent
@@ -260,20 +273,6 @@ func lexPct(l *lexer) stateFn {
 				}
 			}
 		}
-	case 'p':
-		if l.next() != 'r' || l.next() != 'e' || l.next() != 'c' || l.next() != ' ' {
-			l.errorf("expected %%prec")
-		}
-		for {
-			switch r := l.next(); {
-			case isIdent(r):
-				// absorb
-			default:
-				l.backup()
-				l.emit(itemPct)
-				return lexStart
-			}
-		}
 	default:
 		ct := 0
 		for {
@@ -299,10 +298,33 @@ func lexPct(l *lexer) stateFn {
 }
 
 func lexIdent(l *lexer) stateFn {
+	ignoringSpaces := false
 	for {
-		switch r := l.next(); {
+		r := l.next()
+		if ignoringSpaces {
+			switch {
+			case isSpace(r):
+				continue
+			case r == ':':
+				// proceed
+			default:
+				l.backup()
+				l.trim = true
+				l.emit(itemIdent)
+				return lexStart
+			}
+		}
+		switch {
 		case isIdent(r):
 			// absorb
+		case isSpace(r):
+			ignoringSpaces = true
+		case r == ':':
+			// Don't emit the colon in the value.
+			l.backup()
+			l.emit(itemIdentColon)
+			l.next()
+			return lexStart
 		default:
 			l.backup()
 			l.emit(itemIdent)

@@ -139,44 +139,53 @@ func (t *Tree) Parse(text string) (err error) {
 // parse is the top-level parser for a file.
 // It runs to EOF.
 func (t *Tree) parse() {
+	// ignore everything until the first %%
+FindDoublePct:
 	for {
 		switch token := t.next(); token.typ {
-		case itemIdent:
+		case itemDoublePct:
+			break FindDoublePct
+		case itemEOF, itemError:
+			t.unexpected(token, "find first %%")
+		}
+	}
+	for {
+		switch token := t.next(); token.typ {
+		case itemIdentColon:
 			p := newProduction(token.pos, token.val)
 			t.parseProduction(p)
 			t.Productions = append(t.Productions, p)
-		case itemEOF:
+		case itemEOF, itemDoublePct:
+			// EOF or %% mean we are done.
 			return
+		case itemComment, itemPct:
+			// ignore
+		default:
+			t.unexpected(token, "toplevel")
 		}
 	}
 }
 
 func (t *Tree) parseProduction(p *ProductionNode) {
 	const context = "production"
-	t.expect(itemColon, context)
-	if t.peek().typ == itemNL {
-		t.next()
-	}
-	expectExpr := true
 	for {
 		token := t.next()
 		switch token.typ {
-		case itemComment, itemNL:
+		case itemPct, itemComment:
 			// ignore
 		case itemPipe:
-			if expectExpr {
-				t.unexpected(token, context)
-			}
-			expectExpr = true
-		default:
+			// empty expression
+			p.Expressions = append(p.Expressions, newExpression(token.pos))
+		case itemIdentColon, itemEOF, itemDoublePct:
 			t.backup()
-			if !expectExpr {
-				return
-			}
+			return
+		case itemIdent, itemLiteral, itemExpr:
+			t.backup()
 			e := newExpression(token.pos)
 			t.parseExpression(e)
 			p.Expressions = append(p.Expressions, e)
-			expectExpr = false
+		default:
+			t.unexpected(token, context)
 		}
 	}
 }
@@ -185,21 +194,17 @@ func (t *Tree) parseExpression(e *ExpressionNode) {
 	const context = "expression"
 	for {
 		switch token := t.next(); token.typ {
-		case itemNL:
-			peek := t.peek().typ
-			if peek == itemPipe || peek == itemNL {
-				return
-			}
+		case itemPipe:
+			return
+		case itemIdentColon, itemEOF, itemDoublePct:
+			t.backup()
+			return
 		case itemIdent:
 			e.Items = append(e.Items, Item{token.val, TypToken})
 		case itemLiteral:
 			e.Items = append(e.Items, Item{token.val, TypLiteral})
 		case itemExpr:
-			e.Command = token.val
-			if t.peek().typ == itemNL {
-				t.next()
-			}
-			return
+			e.Command += token.val
 		case itemPct, itemComment:
 			// ignore
 		default:

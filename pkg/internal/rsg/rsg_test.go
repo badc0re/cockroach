@@ -20,6 +20,8 @@ import (
 )
 
 const yaccExample = `
+%%
+
 name:
   IDENT
 | unreserved_keyword
@@ -89,10 +91,16 @@ col_qualification_elem:
   {
     $$.val = tree.PrimaryKeyConstraint{}
   }
+
+test  :
+  | decl_one
+    { stuff }
+    decl_two decl_three
+    { other stuff }
 `
 
 func getRSG(t *testing.T) *RSG {
-	r, err := NewRSG(1, yaccExample, false)
+	r, err := NewRSG(1, "ex.y", yaccExample, false)
 	if err != nil {
 		t.Fatal(err)
 	}
