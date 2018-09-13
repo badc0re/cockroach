@@ -473,11 +473,136 @@ func BenchmarkDecodeBinaryDecimal(b *testing.B) {
 		got, err := pgwirebase.DecodeOidDatum(oid.T_numeric, pgwirebase.FormatBinary, bytes)
 		b.StopTimer()
 		evalCtx := tree.NewTestingEvalContext(cluster.MakeTestingClusterSettings())
-		defer evalCtx.Stop(context.Background())
 		if err != nil {
 			b.Fatal(err)
 		} else if got.Compare(evalCtx, expected) != 0 {
 			b.Fatalf("expected %s, got %s", expected, got)
 		}
+		evalCtx.Stop(context.Background())
+	}
+}
+
+func BenchmarkDecode(b *testing.B) {
+	counter := metric.NewCounter(metric.Metadata{})
+	arr := &tree.DArray{
+		Array: make(tree.Datums, 100),
+	}
+	dbytes := make([][]byte, len(arr.Array))
+	ctx := context.Background()
+	evalCtx := tree.NewTestingEvalContext(cluster.MakeTestingClusterSettings())
+	defer evalCtx.Stop(ctx)
+	dconvcfg := sessiondata.DataConversionConfig{
+		ExtraFloatDigits: 3,
+	}
+
+	arrOids := map[oid.Oid]oid.Oid{
+		oid.T_bool:    oid.T__bool,
+		oid.T_int8:    oid.T__int8,
+		oid.T_float8:  oid.T__float8,
+		oid.T_numeric: oid.T__numeric,
+		oid.T_text:    oid.T__text,
+	}
+
+	for id, typ := range map[oid.Oid]types.T{
+		//oid.T_bool:    types.Bool,
+		oid.T_int8:    types.Int,
+		oid.T_float8:  types.Float,
+		oid.T_numeric: types.Decimal,
+		oid.T_text:    types.String,
+	} {
+		b.Run(fmt.Sprintf("oid=%s", oid.TypeName[id]), func(b *testing.B) {
+			arr.ParamTyp = typ
+			semtype, err := sqlbase.TestingDatumTypeToColumnSemanticType(typ)
+			if err != nil {
+				b.Fatal(err)
+			}
+			coltype := sqlbase.ColumnType{SemanticType: semtype}
+			rng := rand.New(rand.NewSource(0))
+			for i := 0; i < len(arr.Array); i++ {
+				arr.Array[i] = sqlbase.RandDatum(rng, coltype, false /* nullOk */)
+			}
+			for _, code := range []pgwirebase.FormatCode{pgwirebase.FormatText, pgwirebase.FormatBinary} {
+				b.Run(fmt.Sprintf("fmt=%s", code), func(b *testing.B) {
+					b.Run("datums", func(b *testing.B) {
+						for i, d := range arr.Array {
+							wbuf := newWriteBuffer(counter)
+							switch code {
+							case pgwirebase.FormatBinary:
+								wbuf.writeBinaryDatum(ctx, d, nil /* sessionLoc */)
+							case pgwirebase.FormatText:
+								wbuf.writeTextDatum(ctx, d, dconvcfg)
+							default:
+								b.Fatal("unknown")
+							}
+							rbuf := pgwirebase.ReadBuffer{Msg: wbuf.wrapped.Bytes()}
+							plen, err := rbuf.GetUint32()
+							if err != nil {
+								b.Fatal(err)
+							}
+							bytes, err := rbuf.GetBytes(int(plen))
+							if err != nil {
+								b.Fatal(err)
+							}
+							dbytes[i] = bytes
+						}
+						b.ResetTimer()
+						for n := 0; n < b.N; n++ {
+							for i, d := range arr.Array {
+								b.StartTimer()
+								got, err := pgwirebase.DecodeOidDatum(id, code, dbytes[i])
+								b.StopTimer()
+								if err != nil {
+									b.Fatal(err)
+								} else if got.Compare(evalCtx, d) != 0 {
+									b.Fatalf("expected %s, got %s, bytes: %q", d, got, dbytes[i])
+								}
+							}
+						}
+					})
+					b.Run("array", func(b *testing.B) {
+						wbuf := newWriteBuffer(counter)
+						switch code {
+						case pgwirebase.FormatBinary:
+							wbuf.writeBinaryDatum(ctx, arr, nil /* sessionLoc */)
+						case pgwirebase.FormatText:
+							wbuf.writeTextDatum(ctx, arr, dconvcfg)
+						default:
+							b.Fatal("unknown")
+						}
+						rbuf := pgwirebase.ReadBuffer{Msg: wbuf.wrapped.Bytes()}
+						plen, err := rbuf.GetUint32()
+						if err != nil {
+							b.Fatal(err)
+						}
+						bytes, err := rbuf.GetBytes(int(plen))
+						if err != nil {
+							b.Fatal(err)
+						}
+						b.ResetTimer()
+						arrid, ok := arrOids[id]
+						if !ok {
+							b.Fatal("no oid")
+						}
+						for n := 0; n < b.N; n++ {
+							b.StartTimer()
+							got, err := pgwirebase.DecodeOidDatum(arrid, code, bytes)
+							fmt.Println("ARRID", arrid, code)
+							fmt.Println("GOT", got.ResolvedType(), got)
+							b.StopTimer()
+							if err != nil {
+								b.Fatal(err)
+							}
+							gotarr, err := tree.ParseDArrayFromString(evalCtx, got.String(), typ)
+							if err != nil {
+								b.Fatal(err)
+							}
+							if got.Compare(evalCtx, arr) != 0 {
+								b.Fatalf("expected: %s\ngot: %s\nbytes: %q", arr, got, bytes)
+							}
+						}
+					})
+				})
+			}
+		})
 	}
 }
