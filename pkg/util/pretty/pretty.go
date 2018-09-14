@@ -154,11 +154,20 @@ func (b *beExec) be(k docPos, xlist *iDoc) *docBest {
 	case *snesting:
 		res = b.be(k, b.iDoc(d.i, t.f(d.i.spaces), z))
 	case pad:
-		res = b.newDocBest(docBest{
-			tag: spacesB,
-			i:   docPos{spaces: t.n},
-			d:   b.be(docPos{k.tabs, k.spaces + t.n}, z),
-		})
+		if !t.left {
+			res = b.newDocBest(docBest{
+				tag: spacesB,
+				i:   docPos{spaces: t.n},
+				d:   b.be(docPos{k.tabs, k.spaces + t.n}, z),
+			})
+		} else {
+			// TODO: figure this out
+			res = b.newDocBest(docBest{
+				tag: spacesB,
+				i:   docPos{spaces: t.n},
+				d:   b.be(docPos{k.tabs, k.spaces + t.n}, z),
+			})
+		}
 	default:
 		panic(fmt.Errorf("unknown type: %T", d.d))
 	}

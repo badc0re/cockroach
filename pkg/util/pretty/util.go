@@ -201,15 +201,23 @@ func JoinNestedOuter(lbl string, d ...Doc) Doc {
 	}
 }
 
-// RLTableRow is the data for one row of a RLTable (see below).
-type RLTableRow struct {
+// TableRow is the data for one row of a Table (see below).
+type TableRow struct {
 	Label string
 	Doc   Doc
 }
 
-// RLTable defines a document that formats a list of pairs of items either:
-//  - as a 2-column table, with the left column right-aligned and the right
-//    column left-aligned, for example:
+type TableAlign int
+
+const (
+	AlignSection TableAlign = iota
+	AlignRight
+	AlignLeft
+)
+
+// Table defines a document that formats a list of pairs of items either:
+//  - as a 2-column table, with the left column aligned as specified and
+//    the right column left-aligned, for example:
 //       SELECT aaa
 //              bbb
 //         FROM ccc
@@ -225,11 +233,7 @@ type RLTableRow struct {
 //
 // For convenience, the function also skips over rows with a nil
 // pointer as doc.
-//
-// For convenience, the function also takes a boolean "align" which,
-// if false, skips the alignment and only produces the section-based
-// output.
-func RLTable(align bool, rows ...RLTableRow) Doc {
+func Table(align TableAlign, rows ...TableRow) Doc {
 	items := make([]Doc, 0, len(rows))
 
 	// Compute the nested formatting in "sections". It's simple.
@@ -253,7 +257,7 @@ func RLTable(align bool, rows ...RLTableRow) Doc {
 
 	finalDoc := nestedSections
 
-	if align {
+	if align != AlignSection {
 		// First, we need the left column width.
 		leftwidth := 0
 		for _, r := range rows {
@@ -267,7 +271,7 @@ func RLTable(align bool, rows ...RLTableRow) Doc {
 		// Now convert the rows.
 		items = items[:0]
 		for _, r := range rows {
-			if r.Doc == nil || (r.Label == "" && r.Doc == Nil) {
+			if r.Doc == nil {
 				continue
 			}
 			if r.Label != "" {
@@ -275,9 +279,15 @@ func RLTable(align bool, rows ...RLTableRow) Doc {
 					func(a, b Doc) Doc {
 						return ConcatSpace(a, Align(Group(b)))
 					})
-				items = append(items, Concat(pad{int16(leftwidth - len(r.Label))}, d))
+				var padding Doc
+				if align == AlignRight {
+					padding = Concat(pad{n: int16(leftwidth - len(r.Label))}, d)
+				} else {
+					padding = Concat(d, pad{n: int16(leftwidth - len(r.Label))})
+				}
+				items = append(items, padding)
 			} else {
-				items = append(items, Concat(pad{int16(leftwidth + 1)}, Align(Group(r.Doc))))
+				items = append(items, Concat(pad{n: int16(leftwidth + 1), left: true}, Align(Group(r.Doc))))
 			}
 		}
 		alignedTable := Stack(items...)

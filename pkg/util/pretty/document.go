@@ -245,5 +245,6 @@ func Align(d Doc) Doc {
 // This document type is not exposed publicly because of the risk
 // described above.
 type pad struct {
-	n int16
+	n    int16
+	left bool
 }
