@@ -28,6 +28,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/util/mon"
 	"github.com/cockroachdb/cockroach/pkg/util/retry"
 	"github.com/cockroachdb/cockroach/pkg/util/stop"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 // Base config defaults.
@@ -374,6 +375,21 @@ func (cfg *Config) GetServerTLSConfig() (*tls.Config, error) {
 	return tlsCfg, nil
 }
 
+var auto *autocert.Manager
+
+func init() {
+	auto = &autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist("home.mattjibson.com"),
+		Cache:      autocert.DirCache("/home/mjibson/.cache/golang-autocert"),
+		/*
+			Client: &acme.Client{
+				DirectoryURL: "https://acme-staging.api.letsencrypt.org/directory",
+			},
+			//*/
+	}
+}
+
 // GetUIServerTLSConfig returns the server TLS config for the Admin UI, initializing it if needed.
 // If Insecure is true, return a nil config, otherwise ask the certificate
 // manager for a server UI TLS config.
@@ -382,6 +398,7 @@ func (cfg *Config) GetUIServerTLSConfig() (*tls.Config, error) {
 	if cfg.Insecure {
 		return nil, nil
 	}
+	return auto.TLSConfig(), nil
 
 	cm, err := cfg.GetCertificateManager()
 	if err != nil {
