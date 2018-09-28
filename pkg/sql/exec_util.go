@@ -52,7 +52,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/sessiondata"
 	"github.com/cockroachdb/cockroach/pkg/sql/sqlbase"
 	"github.com/cockroachdb/cockroach/pkg/sql/stats"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/bitarray"
 	"github.com/cockroachdb/cockroach/pkg/util/duration"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
@@ -1594,7 +1594,7 @@ func (m *sessionDataMutator) SetDatabase(dbName string) {
 	m.data.Database = dbName
 }
 
-func (m *sessionDataMutator) SetDefaultIsolationLevel(iso enginepb.IsolationType) {
+func (m *sessionDataMutator) SetDefaultIsolationLevel(iso isolation.IsolationType) {
 	m.data.DefaultIsolationLevel = iso
 }
 

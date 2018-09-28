@@ -27,7 +27,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
 	"github.com/cockroachdb/cockroach/pkg/sql/sessiondata"
 	"github.com/cockroachdb/cockroach/pkg/sql/sqlbase"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/timeutil"
 	"github.com/cockroachdb/cockroach/pkg/util/tracing"
 )
@@ -187,7 +187,7 @@ var varGen = map[string]sessionVar{
 			}
 			switch strings.ToUpper(s) {
 			case `READ UNCOMMITTED`, `READ COMMITTED`, `SNAPSHOT`, `REPEATABLE READ`, `SERIALIZABLE`:
-				m.SetDefaultIsolationLevel(enginepb.SERIALIZABLE)
+				m.SetDefaultIsolationLevel(isolation.SERIALIZABLE)
 			default:
 				return newVarValueError(`default_transaction_isolation`, s, "serializable")
 			}
@@ -198,7 +198,7 @@ var varGen = map[string]sessionVar{
 			return evalCtx.SessionData.DefaultIsolationLevel.ToLowerCaseString()
 		},
 		Reset: func(m *sessionDataMutator) error {
-			m.SetDefaultIsolationLevel(enginepb.IsolationType(0))
+			m.SetDefaultIsolationLevel(isolation.IsolationType(0))
 			return nil
 		},
 	},

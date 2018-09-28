@@ -44,6 +44,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/storage/batcheval"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/storage/stateloader"
 	"github.com/cockroachdb/cockroach/pkg/storage/storagebase"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
@@ -119,7 +120,7 @@ func TestStoreSplitAbortSpan(t *testing.T) {
 	left, middle, right := roachpb.Key("a"), roachpb.Key("b"), roachpb.Key("c")
 
 	txn := func(key roachpb.Key, ts hlc.Timestamp) *roachpb.Transaction {
-		txn := roachpb.MakeTransaction("test", key, 0, enginepb.SERIALIZABLE, ts, 0)
+		txn := roachpb.MakeTransaction("test", key, 0, isolation.SERIALIZABLE, ts, 0)
 		return &txn
 	}
 
@@ -533,7 +534,7 @@ func TestStoreRangeSplitIdempotency(t *testing.T) {
 	// Increments are a good way of testing idempotency. Up here, we
 	// address them to the original range, then later to the one that
 	// contains the key.
-	txn := roachpb.MakeTransaction("test", []byte("c"), 10, enginepb.SERIALIZABLE,
+	txn := roachpb.MakeTransaction("test", []byte("c"), 10, isolation.SERIALIZABLE,
 		store.Clock().Now(), 0)
 	lIncArgs := incrementArgs([]byte("apoptosis"), 100)
 	lTxn := txn
@@ -3077,7 +3078,7 @@ func TestRangeLookupAsyncResolveIntent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	txn := roachpb.MakeTransaction("test", key2, 1, enginepb.SERIALIZABLE,
+	txn := roachpb.MakeTransaction("test", key2, 1, isolation.SERIALIZABLE,
 		store.Clock().Now(), store.Clock().MaxOffset().Nanoseconds())
 	// Officially begin the transaction. If not for this, the intent resolution
 	// machinery would simply remove the intent we write below, see #3020.

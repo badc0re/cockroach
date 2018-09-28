@@ -22,7 +22,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/storage/batcheval/result"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 )
@@ -45,7 +45,7 @@ func QueryIntent(
 	// This is because we use the timestamp cache to prevent a transaction from
 	// committing, but a SNAPSHOT transaction does not need to restart/abort if
 	// it runs into the timestamp cache and its timestamp is pushed forwards.
-	if args.Txn.Isolation == enginepb.SNAPSHOT &&
+	if args.Txn.Isolation == isolation.SNAPSHOT &&
 		args.IfMissing == roachpb.QueryIntentRequest_PREVENT {
 		return result.Result{}, errors.Errorf("cannot prevent SNAPSHOT transaction with QueryIntent")
 	}
@@ -89,7 +89,7 @@ func QueryIntent(
 
 			// If the transaction is SERIALIZABLE, consider a pushed intent as a
 			// missing intent. If the transaction is SNAPSHOT, don't.
-			if args.Txn.Isolation == enginepb.SERIALIZABLE {
+			if args.Txn.Isolation == isolation.SERIALIZABLE {
 				reply.FoundIntent = false
 			}
 

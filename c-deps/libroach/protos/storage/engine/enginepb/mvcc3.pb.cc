@@ -255,16 +255,6 @@ namespace cockroach {
 namespace storage {
 namespace engine {
 namespace enginepb {
-bool IsolationType_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-      return true;
-    default:
-      return false;
-  }
-}
-
 
 // ===================================================================
 
@@ -392,7 +382,7 @@ bool TxnMeta::MergePartialFromCodedStream(
         break;
       }
 
-      // .cockroach.storage.engine.enginepb.IsolationType isolation = 2;
+      // .cockroach.storage.engine.isolation.IsolationType isolation = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -400,7 +390,7 @@ bool TxnMeta::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_isolation(static_cast< ::cockroach::storage::engine::enginepb::IsolationType >(value));
+          set_isolation(static_cast< ::cockroach::storage::engine::isolation::IsolationType >(value));
         } else {
           goto handle_unusual;
         }
@@ -517,7 +507,7 @@ void TxnMeta::SerializeWithCachedSizes(
       1, this->id(), output);
   }
 
-  // .cockroach.storage.engine.enginepb.IsolationType isolation = 2;
+  // .cockroach.storage.engine.isolation.IsolationType isolation = 2;
   if (this->isolation() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->isolation(), output);
@@ -584,7 +574,7 @@ size_t TxnMeta::ByteSizeLong() const {
         *timestamp_);
   }
 
-  // .cockroach.storage.engine.enginepb.IsolationType isolation = 2;
+  // .cockroach.storage.engine.isolation.IsolationType isolation = 2;
   if (this->isolation() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->isolation());

@@ -36,7 +36,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/server"
 	"github.com/cockroachdb/cockroach/pkg/storage"
 	"github.com/cockroachdb/cockroach/pkg/storage/batcheval"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/storage/storagebase"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
 	"github.com/cockroachdb/cockroach/pkg/testutils/serverutils"
@@ -129,20 +129,20 @@ func TestClientRetryNonTxn(t *testing.T) {
 
 	testCases := []struct {
 		args        roachpb.Request
-		isolation   enginepb.IsolationType
+		isolation   isolation.IsolationType
 		canPush     bool
 		expAttempts int
 	}{
 		// Write/write conflicts.
-		{&roachpb.PutRequest{}, enginepb.SNAPSHOT, true, 2},
-		{&roachpb.PutRequest{}, enginepb.SERIALIZABLE, true, 2},
-		{&roachpb.PutRequest{}, enginepb.SNAPSHOT, false, 1},
-		{&roachpb.PutRequest{}, enginepb.SERIALIZABLE, false, 1},
+		{&roachpb.PutRequest{}, isolation.SNAPSHOT, true, 2},
+		{&roachpb.PutRequest{}, isolation.SERIALIZABLE, true, 2},
+		{&roachpb.PutRequest{}, isolation.SNAPSHOT, false, 1},
+		{&roachpb.PutRequest{}, isolation.SERIALIZABLE, false, 1},
 		// Read/write conflicts.
-		{&roachpb.GetRequest{}, enginepb.SNAPSHOT, true, 1},
-		{&roachpb.GetRequest{}, enginepb.SERIALIZABLE, true, 1},
-		{&roachpb.GetRequest{}, enginepb.SNAPSHOT, false, 1},
-		{&roachpb.GetRequest{}, enginepb.SERIALIZABLE, false, 1},
+		{&roachpb.GetRequest{}, isolation.SNAPSHOT, true, 1},
+		{&roachpb.GetRequest{}, isolation.SERIALIZABLE, true, 1},
+		{&roachpb.GetRequest{}, isolation.SNAPSHOT, false, 1},
+		{&roachpb.GetRequest{}, isolation.SERIALIZABLE, false, 1},
 	}
 	// Lay down a write intent using a txn and attempt to access the same
 	// key from our test client, with priorities set up so that the Push
@@ -160,8 +160,8 @@ func TestClientRetryNonTxn(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			if test.isolation == enginepb.SNAPSHOT {
-				if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if test.isolation == isolation.SNAPSHOT {
+				if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 					return err
 				}
 			}
@@ -260,7 +260,7 @@ func TestClientRunTransaction(t *testing.T) {
 
 		// Use snapshot isolation so non-transactional read can always push.
 		err := db.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 
@@ -324,7 +324,7 @@ func TestClientRunConcurrentTransaction(t *testing.T) {
 
 		// Use snapshot isolation so non-transactional read can always push.
 		err := db.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 

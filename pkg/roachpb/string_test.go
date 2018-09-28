@@ -23,6 +23,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/uuid"
 )
@@ -34,7 +35,7 @@ func TestTransactionString(t *testing.T) {
 	}
 	txn := roachpb.Transaction{
 		TxnMeta: enginepb.TxnMeta{
-			Isolation: enginepb.SERIALIZABLE,
+			Isolation: isolation.SERIALIZABLE,
 			Key:       roachpb.Key("foo"),
 			ID:        txnID,
 			Epoch:     2,
@@ -62,7 +63,7 @@ func TestBatchRequestString(t *testing.T) {
 		"test",
 		nil, /* baseKey */
 		roachpb.NormalUserPriority,
-		enginepb.SERIALIZABLE,
+		isolation.SERIALIZABLE,
 		hlc.Timestamp{}, // now
 		0,               // maxOffsetNs
 	)

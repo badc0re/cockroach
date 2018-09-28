@@ -18,7 +18,7 @@ import (
 	"context"
 
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 )
 
@@ -137,7 +137,7 @@ type TxnSender interface {
 	SetDebugName(name string)
 
 	// SetIsolation sets the transaction's isolation level.
-	SetIsolation(isolation enginepb.IsolationType) error
+	SetIsolation(isolation isolation.IsolationType) error
 
 	// TxnStatus exports the txn's status.
 	TxnStatus() roachpb.TransactionStatus
@@ -315,7 +315,7 @@ func (m *MockTransactionalSender) SetDebugName(name string) {
 }
 
 // SetIsolation is part of the TxnSender interface.
-func (m *MockTransactionalSender) SetIsolation(isolation enginepb.IsolationType) error {
+func (m *MockTransactionalSender) SetIsolation(isolation isolation.IsolationType) error {
 	m.txn.Isolation = isolation
 	return nil
 }

@@ -29,8 +29,8 @@
 #include <google/protobuf/message_lite.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include <google/protobuf/generated_enum_util.h>
 #include "util/hlc/timestamp.pb.h"
+#include "storage/engine/isolation/isolation.pb.h"
 // @@protoc_insertion_point(includes)
 #define PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto 
 
@@ -101,17 +101,6 @@ namespace cockroach {
 namespace storage {
 namespace engine {
 namespace enginepb {
-
-enum IsolationType {
-  SERIALIZABLE = 0,
-  SNAPSHOT = 1,
-  IsolationType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  IsolationType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
-};
-bool IsolationType_IsValid(int value);
-const IsolationType IsolationType_MIN = SERIALIZABLE;
-const IsolationType IsolationType_MAX = SNAPSHOT;
-const int IsolationType_ARRAYSIZE = IsolationType_MAX + 1;
 
 // ===================================================================
 
@@ -238,11 +227,11 @@ class TxnMeta : public ::google::protobuf::MessageLite /* @@protoc_insertion_poi
   ::cockroach::util::hlc::Timestamp* mutable_timestamp();
   void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
 
-  // .cockroach.storage.engine.enginepb.IsolationType isolation = 2;
+  // .cockroach.storage.engine.isolation.IsolationType isolation = 2;
   void clear_isolation();
   static const int kIsolationFieldNumber = 2;
-  ::cockroach::storage::engine::enginepb::IsolationType isolation() const;
-  void set_isolation(::cockroach::storage::engine::enginepb::IsolationType value);
+  ::cockroach::storage::engine::isolation::IsolationType isolation() const;
+  void set_isolation(::cockroach::storage::engine::isolation::IsolationType value);
 
   // uint32 epoch = 4;
   void clear_epoch();
@@ -1656,15 +1645,15 @@ inline void TxnMeta::set_allocated_id(::std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:cockroach.storage.engine.enginepb.TxnMeta.id)
 }
 
-// .cockroach.storage.engine.enginepb.IsolationType isolation = 2;
+// .cockroach.storage.engine.isolation.IsolationType isolation = 2;
 inline void TxnMeta::clear_isolation() {
   isolation_ = 0;
 }
-inline ::cockroach::storage::engine::enginepb::IsolationType TxnMeta::isolation() const {
+inline ::cockroach::storage::engine::isolation::IsolationType TxnMeta::isolation() const {
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.TxnMeta.isolation)
-  return static_cast< ::cockroach::storage::engine::enginepb::IsolationType >(isolation_);
+  return static_cast< ::cockroach::storage::engine::isolation::IsolationType >(isolation_);
 }
-inline void TxnMeta::set_isolation(::cockroach::storage::engine::enginepb::IsolationType value) {
+inline void TxnMeta::set_isolation(::cockroach::storage::engine::isolation::IsolationType value) {
   
   isolation_ = value;
   // @@protoc_insertion_point(field_set:cockroach.storage.engine.enginepb.TxnMeta.isolation)
@@ -3292,14 +3281,6 @@ inline void MVCCLogicalOp::set_allocated_abort_intent(::cockroach::storage::engi
 }  // namespace engine
 }  // namespace storage
 }  // namespace cockroach
-
-namespace google {
-namespace protobuf {
-
-template <> struct is_proto_enum< ::cockroach::storage::engine::enginepb::IsolationType> : ::std::true_type {};
-
-}  // namespace protobuf
-}  // namespace google
 
 // @@protoc_insertion_point(global_scope)
 

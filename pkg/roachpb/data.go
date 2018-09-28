@@ -33,6 +33,7 @@ import (
 
 	"github.com/cockroachdb/apd"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/bitarray"
 	"github.com/cockroachdb/cockroach/pkg/util/duration"
 	"github.com/cockroachdb/cockroach/pkg/util/encoding"
@@ -729,7 +730,7 @@ func MakeTransaction(
 	name string,
 	baseKey Key,
 	userPriority UserPriority,
-	isolation enginepb.IsolationType,
+	isolation isolation.IsolationType,
 	now hlc.Timestamp,
 	maxOffsetNs int64,
 ) Transaction {
@@ -1031,7 +1032,7 @@ func (t *Transaction) UpgradePriority(minPriority int32) {
 // IsSerializable returns whether this transaction uses serializable
 // isolation.
 func (t *Transaction) IsSerializable() bool {
-	return t != nil && t.Isolation == enginepb.SERIALIZABLE
+	return t != nil && t.Isolation == isolation.SERIALIZABLE
 }
 
 // String formats transaction into human readable string.

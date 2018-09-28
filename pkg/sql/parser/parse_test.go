@@ -26,7 +26,9 @@ import (
 	_ "github.com/cockroachdb/cockroach/pkg/sql/sem/builtins"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
+	"github.com/cockroachdb/cockroach/pkg/testutils/buildutil"
 	"github.com/cockroachdb/cockroach/pkg/testutils/sqlutils"
+	"github.com/cockroachdb/cockroach/pkg/util/leaktest"
 	_ "github.com/cockroachdb/cockroach/pkg/util/log" // for flags
 )
 
@@ -2594,4 +2596,14 @@ func BenchmarkParse(b *testing.B) {
 			b.Fatalf("unexpected statement type: %T", st[1])
 		}
 	}
+}
+
+func TestNoLinkForbidden(t *testing.T) {
+	defer leaktest.AfterTest(t)()
+
+	buildutil.VerifyNoImports(t,
+		"github.com/cockroachdb/cockroach/pkg/sql/parser", true, []string{
+			"github.com/cockroachdb/cockroach/pkg/util/log",
+		}, nil,
+	)
 }

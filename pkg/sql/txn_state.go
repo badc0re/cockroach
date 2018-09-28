@@ -25,7 +25,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/contextutil"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
@@ -81,7 +81,7 @@ type txnState struct {
 	sqlTimestamp time.Time
 
 	// The transaction's isolation level.
-	isolation enginepb.IsolationType
+	isolation isolation.IsolationType
 
 	// The transaction's priority.
 	priority roachpb.UserPriority
@@ -139,7 +139,7 @@ func (ts *txnState) resetForNewSQLTxn(
 	connCtx context.Context,
 	txnType txnType,
 	sqlTimestamp time.Time,
-	isolation enginepb.IsolationType,
+	isolation isolation.IsolationType,
 	priority roachpb.UserPriority,
 	readOnly tree.ReadWriteMode,
 	txn *client.Txn,
@@ -276,7 +276,7 @@ func (ts *txnState) finishExternalTxn() {
 	ts.mu.txn = nil
 }
 
-func (ts *txnState) setIsolationLevel(isolation enginepb.IsolationType) error {
+func (ts *txnState) setIsolationLevel(isolation isolation.IsolationType) error {
 	if err := ts.mu.txn.SetIsolation(isolation); err != nil {
 		return err
 	}

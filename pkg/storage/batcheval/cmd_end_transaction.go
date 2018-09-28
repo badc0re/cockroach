@@ -27,6 +27,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/storage/batcheval/result"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/storage/rditer"
 	"github.com/cockroachdb/cockroach/pkg/storage/spanset"
 	"github.com/cockroachdb/cockroach/pkg/storage/stateloader"
@@ -384,7 +385,7 @@ func IsEndTransactionTriggeringRetryError(
 		// retry error if the commit timestamp isn't equal to the txn
 		// timestamp.
 		if isTxnPushed {
-			if txn.Isolation == enginepb.SERIALIZABLE {
+			if txn.Isolation == isolation.SERIALIZABLE {
 				retry, reason = true, roachpb.RETRY_SERIALIZABLE
 			} else if txn.RetryOnPush {
 				// If pushing requires a retry and the transaction was pushed, retry.

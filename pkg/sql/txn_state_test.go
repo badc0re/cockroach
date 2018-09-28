@@ -28,7 +28,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/leaktest"
@@ -121,7 +121,7 @@ func (tc *testContext) createOpenState(
 		sp:            sp,
 		cancel:        cancel,
 		sqlTimestamp:  timeutil.Now(),
-		isolation:     enginepb.SERIALIZABLE,
+		isolation:     isolation.SERIALIZABLE,
 		priority:      roachpb.NormalUserPriority,
 		mon:           &txnStateMon,
 		txnAbortCount: metric.NewCounter(MetaTxnAbort),
@@ -202,7 +202,7 @@ func checkAdv(adv advanceInfo, expCode advanceCode, expRewPos CmdPos, expEv txnE
 // correspond to expectations. Any field left nil will not be checked.
 type expKVTxn struct {
 	debugName    *string
-	isolation    *enginepb.IsolationType
+	isolation    *isolation.IsolationType
 	userPriority *roachpb.UserPriority
 	// For the timestamps we just check the physical part. The logical part is
 	// incremented every time the clock is read and so it's unpredictable.
@@ -267,7 +267,7 @@ func TestTransitions(t *testing.T) {
 
 	txnName := sqlTxnName
 	now := testCon.clock.Now()
-	iso := enginepb.SERIALIZABLE
+	iso := isolation.SERIALIZABLE
 	pri := roachpb.NormalUserPriority
 	maxTS := testCon.clock.Now().Add(testCon.clock.MaxOffset().Nanoseconds(), 0 /* logical */)
 	type test struct {

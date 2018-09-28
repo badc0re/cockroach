@@ -36,7 +36,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/rpc"
 	"github.com/cockroachdb/cockroach/pkg/rpc/nodedialer"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
 	"github.com/cockroachdb/cockroach/pkg/util"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
@@ -501,7 +501,7 @@ func TestImmutableBatchArgs(t *testing.T) {
 
 	txn := roachpb.MakeTransaction(
 		"test", nil /* baseKey */, roachpb.NormalUserPriority,
-		enginepb.SERIALIZABLE, clock.Now(), clock.MaxOffset().Nanoseconds(),
+		isolation.SERIALIZABLE, clock.Now(), clock.MaxOffset().Nanoseconds(),
 	)
 	origTxnTs := txn.Timestamp
 
@@ -1376,7 +1376,7 @@ func TestMultiRangeGapReverse(t *testing.T) {
 
 	ds := NewDistSender(cfg, g)
 
-	txn := roachpb.MakeTransaction("foo", nil, 1.0, enginepb.SERIALIZABLE, clock.Now(), 0)
+	txn := roachpb.MakeTransaction("foo", nil, 1.0, isolation.SERIALIZABLE, clock.Now(), 0)
 
 	var ba roachpb.BatchRequest
 	ba.Txn = &txn

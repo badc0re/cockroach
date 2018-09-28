@@ -26,7 +26,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/keys"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/duration"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
@@ -982,7 +982,7 @@ func (tc *TxnCoordSender) SetDebugName(name string) {
 }
 
 // SetIsolation is part of the client.TxnSender interface.
-func (tc *TxnCoordSender) SetIsolation(isolation enginepb.IsolationType) error {
+func (tc *TxnCoordSender) SetIsolation(isolation isolation.IsolationType) error {
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 
@@ -1065,7 +1065,7 @@ func (tc *TxnCoordSender) IsSerializablePushAndRefreshNotPossible() bool {
 		tc.mu.txn.OrigTimestampWasObserved
 	// We check OrigTimestampWasObserved here because, if that's set, refreshing
 	// of reads is not performed.
-	return tc.mu.txn.Isolation == enginepb.SERIALIZABLE &&
+	return tc.mu.txn.Isolation == isolation.SERIALIZABLE &&
 		isTxnPushed && refreshAttemptNotPossible
 }
 

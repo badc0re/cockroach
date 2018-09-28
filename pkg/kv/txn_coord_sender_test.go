@@ -33,6 +33,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/storage"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
 	"github.com/cockroachdb/cockroach/pkg/testutils/localtestcluster"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
@@ -107,7 +108,7 @@ func TestTxnCoordSenderBeginTransaction(t *testing.T) {
 	key := roachpb.Key("key")
 	txn.InternalSetPriority(10)
 	txn.SetDebugName("test txn")
-	if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+	if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 		t.Fatal(err)
 	}
 	if err := txn.Put(ctx, key, []byte("value")); err != nil {
@@ -123,7 +124,7 @@ func TestTxnCoordSenderBeginTransaction(t *testing.T) {
 	if !bytes.Equal(proto.Key, key) {
 		t.Errorf("expected txn Key to match %q != %q", key, proto.Key)
 	}
-	if proto.Isolation != enginepb.SNAPSHOT {
+	if proto.Isolation != isolation.SNAPSHOT {
 		t.Errorf("expected txn isolation to be SNAPSHOT; got %s", proto.Isolation)
 	}
 }
@@ -455,7 +456,7 @@ func TestTxnCoordSenderEndTxn(t *testing.T) {
 		key := roachpb.Key("key: " + strconv.Itoa(i))
 		txn := client.NewTxn(ctx, s.DB, 0 /* gatewayNodeID */, client.RootTxn)
 		// Set to SNAPSHOT so that it can be pushed without restarting.
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			t.Fatal(err)
 		}
 		// Initialize the transaction.
@@ -807,7 +808,7 @@ func TestTxnCoordSenderTxnUpdatedOnError(t *testing.T) {
 				"test txn",
 				key,
 				roachpb.UserPriority(0),
-				enginepb.SERIALIZABLE,
+				isolation.SERIALIZABLE,
 				clock.Now(),
 				clock.MaxOffset().Nanoseconds(),
 			)
@@ -1110,7 +1111,7 @@ func TestTxnCommit(t *testing.T) {
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 		key := []byte("key-commit")
 
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			return err
 		}
 
@@ -1170,7 +1171,7 @@ func TestTxnAbortCount(t *testing.T) {
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 		key := []byte("key-abort")
 
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			return err
 		}
 
@@ -1253,7 +1254,7 @@ func TestTxnDurations(t *testing.T) {
 	for i := 0; i < puts; i++ {
 		key := roachpb.Key(fmt.Sprintf("key-txn-durations-%d", i))
 		if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 			if err := txn.Put(ctx, key, []byte("val")); err != nil {
@@ -1602,7 +1603,7 @@ func TestIntentTrackingBeforeBeginTransaction(t *testing.T) {
 		"test txn",
 		key,
 		roachpb.UserPriority(0),
-		enginepb.SERIALIZABLE,
+		isolation.SERIALIZABLE,
 		clock.Now(),
 		clock.MaxOffset().Nanoseconds(),
 	)

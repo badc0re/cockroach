@@ -28,6 +28,7 @@ import (
 
 	"github.com/cockroachdb/apd"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/testutils/zerofields"
 	"github.com/cockroachdb/cockroach/pkg/util"
 	"github.com/cockroachdb/cockroach/pkg/util/bitarray"
@@ -387,7 +388,7 @@ func TestSetGetChecked(t *testing.T) {
 
 func TestTransactionBumpEpoch(t *testing.T) {
 	origNow := makeTS(10, 1)
-	txn := MakeTransaction("test", Key("a"), 1, enginepb.SERIALIZABLE, origNow, 0)
+	txn := MakeTransaction("test", Key("a"), 1, isolation.SERIALIZABLE, origNow, 0)
 	// Advance the txn timestamp.
 	txn.Timestamp.Add(10, 2)
 	txn.BumpEpoch()
@@ -408,7 +409,7 @@ func TestTransactionInclusiveTimeBounds(t *testing.T) {
 		}
 	}
 	origNow := makeTS(1, 1)
-	txn := MakeTransaction("test", Key("a"), 1, enginepb.SERIALIZABLE, origNow, 0)
+	txn := MakeTransaction("test", Key("a"), 1, isolation.SERIALIZABLE, origNow, 0)
 	verify(txn, origNow, origNow)
 	txn.Timestamp.Forward(makeTS(1, 2))
 	verify(txn, origNow, makeTS(1, 2))
@@ -476,7 +477,7 @@ func TestFastPathObservedTimestamp(t *testing.T) {
 
 var nonZeroTxn = Transaction{
 	TxnMeta: enginepb.TxnMeta{
-		Isolation: enginepb.SNAPSHOT,
+		Isolation: isolation.SNAPSHOT,
 		Key:       Key("foo"),
 		ID:        uuid.MakeV4(),
 		Epoch:     2,
@@ -515,7 +516,7 @@ func TestTransactionUpdate(t *testing.T) {
 	var txn3 Transaction
 	txn3.ID = uuid.MakeV4()
 	txn3.Name = "carl"
-	txn3.Isolation = enginepb.SNAPSHOT
+	txn3.Isolation = isolation.SNAPSHOT
 	txn3.Update(&txn)
 
 	if err := zerofields.NoZeroField(txn3); err != nil {

@@ -27,7 +27,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/keys"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/storage"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/storage/tscache"
 	"github.com/cockroachdb/cockroach/pkg/testutils"
 	"github.com/cockroachdb/cockroach/pkg/testutils/localtestcluster"
@@ -50,7 +50,7 @@ func TestTxnDBBasics(t *testing.T) {
 
 		err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 			// Use snapshot isolation so non-transactional read can always push.
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 
@@ -153,7 +153,7 @@ func TestSnapshotIsolationIncrement(t *testing.T) {
 	}()
 
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			t.Fatal(err)
 		}
 
@@ -227,7 +227,7 @@ func TestSnapshotIsolationLostUpdate(t *testing.T) {
 	}()
 
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			t.Fatal(err)
 		}
 
@@ -310,7 +310,7 @@ func TestPriorityRatchetOnAbortOrPush(t *testing.T) {
 
 	// Try all combinations of read/write and snapshot/serializable isolation.
 	for _, read := range []bool{true, false} {
-		for _, iso := range []enginepb.IsolationType{enginepb.SNAPSHOT, enginepb.SERIALIZABLE} {
+		for _, iso := range []isolation.IsolationType{isolation.SNAPSHOT, isolation.SERIALIZABLE} {
 			var iteration int
 			if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 				defer func() { iteration++ }()
@@ -373,7 +373,7 @@ func TestTxnTimestampRegression(t *testing.T) {
 	keyB := "b"
 	err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 		// Use snapshot isolation so non-transactional read can always push.
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			return err
 		}
 		// Put transactional value.
@@ -415,7 +415,7 @@ func TestTxnLongDelayBetweenWritesWithConcurrentRead(t *testing.T) {
 	go func() {
 		errChan <- s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 			// Use snapshot isolation.
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 			// Put transactional value.
@@ -437,7 +437,7 @@ func TestTxnLongDelayBetweenWritesWithConcurrentRead(t *testing.T) {
 	s.Manual.Increment((tscache.MinRetentionWindow + time.Second).Nanoseconds())
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 		// Use snapshot isolation.
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			return err
 		}
 
@@ -489,7 +489,7 @@ func TestTxnRepeatGetWithRangeSplit(t *testing.T) {
 	go func() {
 		errChan <- s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 			// Use snapshot isolation.
-			if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+			if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 				return err
 			}
 			// Put transactional value.
@@ -510,7 +510,7 @@ func TestTxnRepeatGetWithRangeSplit(t *testing.T) {
 
 	if err := s.DB.Txn(context.TODO(), func(ctx context.Context, txn *client.Txn) error {
 		// Use snapshot isolation.
-		if err := txn.SetIsolation(enginepb.SNAPSHOT); err != nil {
+		if err := txn.SetIsolation(isolation.SNAPSHOT); err != nil {
 			return err
 		}
 

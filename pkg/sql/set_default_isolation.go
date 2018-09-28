@@ -19,7 +19,7 @@ import (
 
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 )
 
 func (p *planner) SetSessionCharacteristics(n *tree.SetSessionCharacteristics) (planNode, error) {
@@ -27,7 +27,7 @@ func (p *planner) SetSessionCharacteristics(n *tree.SetSessionCharacteristics) (
 	// Ensure both versions stay in sync.
 	switch n.Modes.Isolation {
 	case tree.SerializableIsolation:
-		p.sessionDataMutator.SetDefaultIsolationLevel(enginepb.SERIALIZABLE)
+		p.sessionDataMutator.SetDefaultIsolationLevel(isolation.SERIALIZABLE)
 	case tree.UnspecifiedIsolation:
 	default:
 		return nil, fmt.Errorf("unsupported default isolation level: %s", n.Modes.Isolation)

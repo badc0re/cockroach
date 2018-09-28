@@ -21,7 +21,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 	"github.com/cockroachdb/cockroach/pkg/util/protoutil"
@@ -70,7 +70,7 @@ type Txn struct {
 		syncutil.Mutex
 		ID        uuid.UUID
 		debugName string
-		isolation enginepb.IsolationType
+		isolation isolation.IsolationType
 
 		// userPriority is the transaction's priority. If not set,
 		// NormalUserPriority will be used.
@@ -116,7 +116,7 @@ func NewTxn(ctx context.Context, db *DB, gatewayNodeID roachpb.NodeID, typ TxnTy
 		"unnamed",
 		nil, // baseKey
 		roachpb.NormalUserPriority,
-		enginepb.SERIALIZABLE,
+		isolation.SERIALIZABLE,
 		now,
 		db.clock.MaxOffset().Nanoseconds(),
 	)
@@ -257,7 +257,7 @@ func (txn *Txn) debugNameLocked() string {
 // SetIsolation sets the transaction's isolation type. Transactions default to
 // serializable isolation. The isolation must be set before any operations are
 // performed on the transaction.
-func (txn *Txn) SetIsolation(isolation enginepb.IsolationType) error {
+func (txn *Txn) SetIsolation(isolation isolation.IsolationType) error {
 	txn.mu.Lock()
 	defer txn.mu.Unlock()
 
@@ -269,7 +269,7 @@ func (txn *Txn) SetIsolation(isolation enginepb.IsolationType) error {
 }
 
 // Isolation returns the transaction's isolation type.
-func (txn *Txn) Isolation() enginepb.IsolationType {
+func (txn *Txn) Isolation() isolation.IsolationType {
 	txn.mu.Lock()
 	defer txn.mu.Unlock()
 	return txn.mu.isolation

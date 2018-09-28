@@ -26,7 +26,7 @@ import (
 
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 
 	// We dot-import fsm to use common names such as fsm.True/False. State machine
 	// implementations using that library are weird beasts intimately inter-twined
@@ -126,7 +126,7 @@ type eventTxnStart struct {
 type eventTxnStartPayload struct {
 	tranCtx transitionCtx
 
-	iso enginepb.IsolationType
+	iso isolation.IsolationType
 	pri roachpb.UserPriority
 	// txnSQLTimestamp is the timestamp that statements executed in the
 	// transaction that is started by this event will report for now(),
@@ -136,7 +136,7 @@ type eventTxnStartPayload struct {
 }
 
 func makeEventTxnStartPayload(
-	iso enginepb.IsolationType,
+	iso isolation.IsolationType,
 	pri roachpb.UserPriority,
 	readOnly tree.ReadWriteMode,
 	txnSQLTimestamp time.Time,

@@ -38,7 +38,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
 	"github.com/cockroachdb/cockroach/pkg/sql/sessiondata"
 	"github.com/cockroachdb/cockroach/pkg/sql/sqlbase"
-	"github.com/cockroachdb/cockroach/pkg/storage/engine/enginepb"
+	"github.com/cockroachdb/cockroach/pkg/storage/engine/isolation"
 	"github.com/cockroachdb/cockroach/pkg/util"
 	"github.com/cockroachdb/cockroach/pkg/util/envutil"
 	"github.com/cockroachdb/cockroach/pkg/util/errorutil"
@@ -1667,15 +1667,17 @@ func (ex *connExecutor) setTransactionModes(modes tree.TransactionModes) error {
 	return ex.state.setReadOnlyMode(modes.ReadWriteMode)
 }
 
-func (ex *connExecutor) isolationToProto(mode tree.IsolationLevel) (enginepb.IsolationType, error) {
-	var iso enginepb.IsolationType
+func (ex *connExecutor) isolationToProto(
+	mode tree.IsolationLevel,
+) (isolation.IsolationType, error) {
+	var iso isolation.IsolationType
 	switch mode {
 	case tree.UnspecifiedIsolation:
 		iso = ex.sessionData.DefaultIsolationLevel
 	case tree.SerializableIsolation:
-		iso = enginepb.SERIALIZABLE
+		iso = isolation.SERIALIZABLE
 	default:
-		return enginepb.IsolationType(0), errors.Errorf("unknown isolation level: %s", mode)
+		return isolation.IsolationType(0), errors.Errorf("unknown isolation level: %s", mode)
 	}
 	return iso, nil
 }
