@@ -12,15 +12,13 @@
 // implied. See the License for the specific language governing
 // permissions and limitations under the License.
 
-package base
+package docs
 
-import (
-	"github.com/cockroachdb/cockroach/pkg/build"
-)
+var VersionPrefix string
 
 // DocsURLBase is the root URL for the version of the docs associated with this
 // binary.
-var DocsURLBase = "https://www.cockroachlabs.com/docs/" + build.VersionPrefix()
+var DocsURLBase = "https://www.cockroachlabs.com/docs/" + VersionPrefix
 
 // DocsURL generates the URL to pageName in the version of the docs associated
 // with this binary.

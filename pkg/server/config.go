@@ -35,6 +35,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
 	"github.com/cockroachdb/cockroach/pkg/ts"
 	"github.com/cockroachdb/cockroach/pkg/util"
+	"github.com/cockroachdb/cockroach/pkg/util/docs"
 	"github.com/cockroachdb/cockroach/pkg/util/envutil"
 	"github.com/cockroachdb/cockroach/pkg/util/humanizeutil"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
@@ -79,7 +80,7 @@ const (
 
 var productionSettingsWebpage = fmt.Sprintf(
 	"please see %s for more details",
-	base.DocsURL("recommended-production-settings.html"),
+	docs.DocsURL("recommended-production-settings.html"),
 )
 
 // MaxOffsetType stores the configured MaxOffset.

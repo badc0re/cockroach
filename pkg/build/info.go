@@ -19,6 +19,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/cockroachdb/cockroach/pkg/util/docs"
 	"github.com/cockroachdb/cockroach/pkg/util/envutil"
 	version "github.com/hashicorp/go-version"
 )
@@ -80,6 +81,7 @@ func init() {
 		"COCKROACH_TESTING_VERSION_TAG", ""); tagOverride != "" {
 		tag = tagOverride
 	}
+	docs.VersionPrefix = VersionPrefix()
 }
 
 // Short returns a pretty printed build and version summary.

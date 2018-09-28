@@ -47,6 +47,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/server/status"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
 	"github.com/cockroachdb/cockroach/pkg/storage/engine"
+	"github.com/cockroachdb/cockroach/pkg/util/docs"
 	"github.com/cockroachdb/cockroach/pkg/util/envutil"
 	"github.com/cockroachdb/cockroach/pkg/util/grpcutil"
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
@@ -529,7 +530,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 - double-checking that the '--join' and '--listen'/'--advertise' flags are set up correctly;
 - running the 'cockroach init' command if you are trying to initialize a new cluster.
 
-If problems persist, please see ` + base.DocsURL("cluster-setup-troubleshooting.html") + "."
+If problems persist, please see ` + docs.DocsURL("cluster-setup-troubleshooting.html") + "."
 
 		if !startCtx.inBackground {
 			log.Shout(context.Background(), log.Severity_WARNING, msg)
@@ -1058,7 +1059,7 @@ func setupAndInitializeLoggingAndProfiling(ctx context.Context) (*stop.Stopper, 
 				"- Any user, even root, can log in without providing a password.\n"+
 				"- Any user, connecting as root, can read or write any data in your cluster.\n"+
 				"- There is no network encryption nor authentication, and thus no confidentiality.\n\n"+
-				"Check out how to secure your cluster: "+base.DocsURL("secure-a-cluster.html"))
+				"Check out how to secure your cluster: "+docs.DocsURL("secure-a-cluster.html"))
 	}
 
 	maybeWarnMemorySizes(ctx)

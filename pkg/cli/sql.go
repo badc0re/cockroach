@@ -30,13 +30,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cockroachdb/cockroach/pkg/base"
 	"github.com/cockroachdb/cockroach/pkg/cli/cliflags"
 	"github.com/cockroachdb/cockroach/pkg/sql"
 	"github.com/cockroachdb/cockroach/pkg/sql/lex"
 	"github.com/cockroachdb/cockroach/pkg/sql/parser"
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/builtins"
+	"github.com/cockroachdb/cockroach/pkg/util/docs"
 	"github.com/cockroachdb/cockroach/pkg/util/envutil"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 	readline "github.com/knz/go-libedit"
@@ -200,8 +200,8 @@ Type:
 More documentation about our SQL dialect and the CLI shell is available online:
 %s
 %s`,
-		base.DocsURL("sql-statements.html"),
-		base.DocsURL("use-the-built-in-sql-client.html"),
+		docs.DocsURL("sql-statements.html"),
+		docs.DocsURL("use-the-built-in-sql-client.html"),
 	)
 	fmt.Println()
 }
