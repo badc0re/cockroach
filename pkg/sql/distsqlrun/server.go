@@ -25,6 +25,7 @@ import (
 	"sync"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/gossip"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
 	"github.com/cockroachdb/cockroach/pkg/jobs"
@@ -619,7 +620,7 @@ type TestingKnobs struct {
 	DeterministicStats bool
 
 	// Changefeed contains testing knobs specific to the changefeed system.
-	Changefeed base.ModuleTestingKnobs
+	Changefeed knobs.ModuleTestingKnobs
 }
 
 // MetadataTestLevel represents the types of queries where metadata test
@@ -636,7 +637,7 @@ const (
 	On
 )
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*TestingKnobs) ModuleTestingKnobs() {}
 
 var errEvalPlanner = errors.New("cannot backfill such evaluated expression")

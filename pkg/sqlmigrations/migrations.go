@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
 	"github.com/cockroachdb/cockroach/pkg/keys"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
@@ -55,10 +56,10 @@ type MigrationManagerTestingKnobs struct {
 	DisableBackfillMigrations bool
 }
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*MigrationManagerTestingKnobs) ModuleTestingKnobs() {}
 
-var _ base.ModuleTestingKnobs = &MigrationManagerTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &MigrationManagerTestingKnobs{}
 
 // backwardCompatibleMigrations is a hard-coded list of migrations to be run on
 // startup. They will always be run from top-to-bottom, and because they are

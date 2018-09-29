@@ -29,7 +29,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cockroachdb/apd"
-	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
@@ -2398,9 +2398,9 @@ type EvalContextTestingKnobs struct {
 	DisableOptimizerRuleProbability float64
 }
 
-var _ base.ModuleTestingKnobs = &EvalContextTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &EvalContextTestingKnobs{}
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*EvalContextTestingKnobs) ModuleTestingKnobs() {}
 
 // EvalContext defines the context in which to evaluate an expression, allowing

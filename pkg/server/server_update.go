@@ -33,7 +33,7 @@ type UpgradeTestingKnobs struct {
 	DisableUpgrade int32 // accessed atomically
 }
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*UpgradeTestingKnobs) ModuleTestingKnobs() {}
 
 // startAttemptUpgrade attempts to upgrade cluster version.

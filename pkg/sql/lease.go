@@ -28,6 +28,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/config"
 	"github.com/cockroachdb/cockroach/pkg/gossip"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
@@ -1159,10 +1160,10 @@ type LeaseStoreTestingKnobs struct {
 	RemoveOnceDereferenced bool
 }
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*LeaseStoreTestingKnobs) ModuleTestingKnobs() {}
 
-var _ base.ModuleTestingKnobs = &LeaseStoreTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &LeaseStoreTestingKnobs{}
 
 // LeaseManagerTestingKnobs contains test knobs.
 type LeaseManagerTestingKnobs struct {
@@ -1177,9 +1178,9 @@ type LeaseManagerTestingKnobs struct {
 	LeaseStoreTestingKnobs LeaseStoreTestingKnobs
 }
 
-var _ base.ModuleTestingKnobs = &LeaseManagerTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &LeaseManagerTestingKnobs{}
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*LeaseManagerTestingKnobs) ModuleTestingKnobs() {}
 
 type tableNameCacheKey struct {

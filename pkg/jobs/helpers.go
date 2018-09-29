@@ -61,7 +61,7 @@ func NewFakeNodeLiveness(nodeCount int) *FakeNodeLiveness {
 	return nl
 }
 
-// ModuleTestingKnobs implements base.ModuleTestingKnobs.
+// ModuleTestingKnobs implements knobs.ModuleTestingKnobs.
 func (*FakeNodeLiveness) ModuleTestingKnobs() {}
 
 // Self implements the implicit storage.NodeLiveness interface. It uses NodeID

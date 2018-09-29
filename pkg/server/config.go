@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/gossip/resolver"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/server/status"
@@ -221,7 +222,7 @@ type Config struct {
 	ScanMaxIdleTime time.Duration
 
 	// TestingKnobs is used for internal test controls only.
-	TestingKnobs base.TestingKnobs
+	TestingKnobs knobs.TestingKnobs
 
 	// AmbientCtx is used to annotate contexts used inside the server.
 	AmbientCtx log.AmbientContext

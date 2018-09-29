@@ -32,6 +32,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
 	"github.com/cockroachdb/cockroach/pkg/kv"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
@@ -371,7 +372,7 @@ func (ta *TxnAborter) statementFilter(ctx context.Context, stmt string, err erro
 }
 
 // executorKnobs are the bridge between the TxnAborter and the sql.Executor.
-func (ta *TxnAborter) executorKnobs() base.ModuleTestingKnobs {
+func (ta *TxnAborter) executorKnobs() knobs.ModuleTestingKnobs {
 	return &sql.ExecutorTestingKnobs{
 		// We're going to abort txns using a TxnAborter, and that's incompatible
 		// with AutoCommit.

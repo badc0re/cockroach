@@ -32,6 +32,7 @@ import (
 
 	"github.com/cockroachdb/apd"
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/config"
 	"github.com/cockroachdb/cockroach/pkg/gossip"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
@@ -322,9 +323,9 @@ func (ec *ExecutorConfig) Organization() string {
 	return ClusterOrganization.Get(&ec.Settings.SV)
 }
 
-var _ base.ModuleTestingKnobs = &ExecutorTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &ExecutorTestingKnobs{}
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*ExecutorTestingKnobs) ModuleTestingKnobs() {}
 
 // StatementFilter is the type of callback that

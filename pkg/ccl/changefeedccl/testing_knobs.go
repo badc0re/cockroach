@@ -17,5 +17,5 @@ type TestingKnobs struct {
 	AfterSinkFlush func() error
 }
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*TestingKnobs) ModuleTestingKnobs() {}

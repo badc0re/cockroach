@@ -14,7 +14,7 @@
 
 package kv
 
-import "github.com/cockroachdb/cockroach/pkg/base"
+import "github.com/cockroachdb/cockroach/pkg/base/knobs"
 
 // ClientTestingKnobs contains testing options that dictate the behavior
 // of the key-value client.
@@ -29,7 +29,7 @@ type ClientTestingKnobs struct {
 	MaxTxnRefreshAttempts int
 }
 
-var _ base.ModuleTestingKnobs = &ClientTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &ClientTestingKnobs{}
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*ClientTestingKnobs) ModuleTestingKnobs() {}

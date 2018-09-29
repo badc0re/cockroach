@@ -35,6 +35,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/cockroachdb/cockroach/pkg/base"
+	"github.com/cockroachdb/cockroach/pkg/base/knobs"
 	"github.com/cockroachdb/cockroach/pkg/config"
 	"github.com/cockroachdb/cockroach/pkg/gossip"
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
@@ -139,9 +140,9 @@ func TestStoreConfig(clock *hlc.Clock) StoreConfig {
 	}
 	st := cluster.MakeTestingClusterSettings()
 	sc := StoreConfig{
-		Settings:   st,
-		AmbientCtx: log.AmbientContext{Tracer: st.Tracer},
-		Clock:      clock,
+		Settings:                    st,
+		AmbientCtx:                  log.AmbientContext{Tracer: st.Tracer},
+		Clock:                       clock,
 		CoalescedHeartbeatsInterval: 50 * time.Millisecond,
 		RaftHeartbeatIntervalTicks:  1,
 		ScanInterval:                10 * time.Minute,
@@ -858,9 +859,9 @@ type StoreTestingKnobs struct {
 	BootstrapVersion *cluster.ClusterVersion
 }
 
-var _ base.ModuleTestingKnobs = &StoreTestingKnobs{}
+var _ knobs.ModuleTestingKnobs = &StoreTestingKnobs{}
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*StoreTestingKnobs) ModuleTestingKnobs() {}
 
 // Valid returns true if the StoreConfig is populated correctly.

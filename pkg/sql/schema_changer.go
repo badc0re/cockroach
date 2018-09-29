@@ -1286,7 +1286,7 @@ type SchemaChangerTestingKnobs struct {
 	OnError func(err error)
 }
 
-// ModuleTestingKnobs is part of the base.ModuleTestingKnobs interface.
+// ModuleTestingKnobs is part of the knobs.ModuleTestingKnobs interface.
 func (*SchemaChangerTestingKnobs) ModuleTestingKnobs() {}
 
 // SchemaChangeManager processes pending schema changes seen in gossip
