@@ -19,7 +19,7 @@ option go_package = "roachpb";
 import "roachpb/data.proto";
 import "roachpb/metadata.proto";
 import "storage/engine/enginepb/mvcc3.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // Issue #1246. Commented out because
@@ -101,11 +101,11 @@ message ReadWithinUncertaintyIntervalError {
 
   // This data below is purely informational and used to tailor the
   // error message.
-  optional util.hlc.Timestamp read_timestamp = 1 [(gogoproto.nullable) = false];
-  optional util.hlc.Timestamp existing_timestamp = 2 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp read_timestamp = 1 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp existing_timestamp = 2 [(gogoproto.nullable) = false];
   // The remaining fields may be missing when running in clusters that have
   // members at below CockroachDB v2.0.
-  optional util.hlc.Timestamp max_timestamp = 3;
+  optional util.hlc.hlcpb.Timestamp max_timestamp = 3;
   repeated ObservedTimestamp observed_timestamps = 4 [(gogoproto.nullable) = false];
 }
 
@@ -259,8 +259,8 @@ message WriteIntentError {
 message WriteTooOldError {
   option (gogoproto.equal) = true;
 
-  optional util.hlc.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
-  optional util.hlc.Timestamp actual_timestamp = 2 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp actual_timestamp = 2 [(gogoproto.nullable) = false];
 }
 
 // An OpRequiresTxnError indicates that a command required to be
@@ -426,8 +426,8 @@ message MixedSuccessError {
 message BatchTimestampBeforeGCError {
   option (gogoproto.equal) = true;
 
-  optional util.hlc.Timestamp Timestamp = 1 [(gogoproto.nullable) = false];
-  optional util.hlc.Timestamp Threshold = 2 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp Timestamp = 1 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp Threshold = 2 [(gogoproto.nullable) = false];
 }
 
 // An IntentMissingError indicates that a QueryIntent request expected
@@ -574,7 +574,7 @@ message Error {
 
   // now is the current time at the node sending the response,
   // which can be used by the receiver to update its local HLC.
-  optional util.hlc.Timestamp now = 8 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp now = 8 [(gogoproto.nullable) = false];
 
   reserved 2;
 }

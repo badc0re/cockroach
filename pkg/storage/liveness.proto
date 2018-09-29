@@ -16,7 +16,7 @@ syntax = "proto3";
 package cockroach.storage;
 option go_package = "storage";
 
-import "util/hlc/legacy_timestamp.proto";
+import "util/hlc/hlcpb/legacy_timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // Liveness holds information about a node's latest heartbeat and epoch.
@@ -33,7 +33,7 @@ message Liveness {
   // is later than the expiration timestamp).
   int64 epoch = 2;
   // The timestamp at which this liveness record expires.
-  util.hlc.LegacyTimestamp expiration = 3 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.LegacyTimestamp expiration = 3 [(gogoproto.nullable) = false];
   bool draining = 4;
   bool decommissioning = 5;
 }

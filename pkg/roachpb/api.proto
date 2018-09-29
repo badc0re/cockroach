@@ -21,7 +21,7 @@ import "roachpb/errors.proto";
 import "roachpb/metadata.proto";
 import "storage/engine/enginepb/mvcc.proto";
 import "storage/engine/enginepb/mvcc3.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "util/tracing/recorded_span.proto";
 import "gogoproto/gogo.proto";
 
@@ -490,7 +490,7 @@ message EndTransactionRequest {
   // trouble with the deadline check. A Serializable txn that has had its
   // timestamp pushed has already lost before the deadline check: it will be
   // forced to restart.
-  util.hlc.Timestamp deadline = 3;
+  util.hlc.hlcpb.Timestamp deadline = 3;
   // commit triggers. Note that commit triggers are for
   // internal use only and will cause an error if requested through the
   // external-facing KV API.
@@ -643,7 +643,7 @@ message HeartbeatTxnRequest {
   option (gogoproto.equal) = true;
 
   RequestHeader header = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];
-  util.hlc.Timestamp now = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp now = 2 [(gogoproto.nullable) = false];
 }
 
 // A HeartbeatTxnResponse is the return value from the HeartbeatTxn()
@@ -665,14 +665,14 @@ message GCRequest {
     option (gogoproto.equal) = true;
 
     bytes key = 1 [(gogoproto.casttype) = "Key"];
-    util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
   }
   repeated GCKey keys = 3 [(gogoproto.nullable) = false];
   // Threshold is the expiration timestamp.
-  util.hlc.Timestamp threshold = 4 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp threshold = 4 [(gogoproto.nullable) = false];
   // TxnSpanGCThreshold is the timestamp below which inactive transactions were
   // considered for GC (and thus might have been removed).
-  util.hlc.Timestamp txn_span_gc_threshold = 5 [(gogoproto.nullable) = false,
+  util.hlc.hlcpb.Timestamp txn_span_gc_threshold = 5 [(gogoproto.nullable) = false,
       (gogoproto.customname) = "TxnSpanGCThreshold"];
 }
 
@@ -726,12 +726,12 @@ message PushTxnRequest {
   // PushTo is the timestamp just after which PusheeTxn is attempted to be
   // pushed. During conflict resolution, it should be set to the timestamp
   // of the its conflicting write.
-  util.hlc.Timestamp push_to = 4 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp push_to = 4 [(gogoproto.nullable) = false];
   // Now holds the timestamp used to compare the last heartbeat of the pushee
   // against. This is necessary since the request header's timestamp does not
   // necessarily advance with the node clock across retries and hence cannot
   // detect abandoned transactions.
-  util.hlc.Timestamp now = 5 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp now = 5 [(gogoproto.nullable) = false];
   // Readers set this to PUSH_TIMESTAMP to move pushee_txn's provisional
   // commit timestamp forward. Writers set this to PUSH_ABORT to request
   // that pushee_txn be aborted if possible. Inconsistent readers set
@@ -884,7 +884,7 @@ message ResolveIntentRangeRequest {
   // The minimum timestamp for any intents written by this
   // transaction. If present, this value can be used to optimize the
   // iteration over the span to find intents to resolve.
-  util.hlc.Timestamp min_timestamp = 5 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp min_timestamp = 5 [(gogoproto.nullable) = false];
 }
 
 // A ResolveIntentRangeResponse is the return value from the
@@ -947,7 +947,7 @@ message RequestLeaseRequest {
   // The MinLeaseProposedTS of the proposing replica to make sure that leases
   // issued after a node restart receive a new sequence number (instead of
   // counting as a lease extension). See #23204.
-  util.hlc.Timestamp min_proposed_ts = 4 [(gogoproto.customname) = "MinProposedTS"];
+  util.hlc.hlcpb.Timestamp min_proposed_ts = 4 [(gogoproto.customname) = "MinProposedTS"];
 }
 
 // A TransferLeaseRequest represents the arguments to the TransferLease()
@@ -1116,7 +1116,7 @@ message ExportRequest {
 
   RequestHeader header = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];
   ExportStorage storage = 2 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp start_time = 3 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp start_time = 3 [(gogoproto.nullable) = false];
   MVCCFilter mvcc_filter = 4 [(gogoproto.customname) = "MVCCFilter"];
 
   // Return the exported SST data in the response.
@@ -1153,7 +1153,7 @@ message ExportResponse {
 
   ResponseHeader header = 1 [(gogoproto.nullable) = false, (gogoproto.embed) = true];
   repeated File files = 2 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp start_time = 3 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp start_time = 3 [(gogoproto.nullable) = false];
 }
 
 // ImportRequest is the argument to the Import() method, to bulk load key/value
@@ -1177,7 +1177,7 @@ message ImportRequest {
   Span data_span = 3 [(gogoproto.nullable) = false];
   // EndTime, if not the zero value, will cause only entries before it to be
   // imported.
-  util.hlc.Timestamp end_time = 6 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp end_time = 6 [(gogoproto.nullable) = false];
   reserved 4;
   message TableRekey {
     option (gogoproto.equal) = true;
@@ -1320,7 +1320,7 @@ message SubsumeResponse {
   // before it stopped responding to requests altogether (in anticipation of
   // being subsumed). It is suitable for use as the timestamp cache's low water
   // mark for the keys previously owned by the subsumed range.
-  util.hlc.Timestamp freeze_start = 5 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp freeze_start = 5 [(gogoproto.nullable) = false];
 }
 
 // RangeStatsRequest is the argument to the RangeStats() method. It requests the
@@ -1450,7 +1450,7 @@ message Header {
   // timestamp specifies time at which read or writes should be
   // performed. If the timestamp is set to zero value, its value
   // is initialized to the wall time of the receiving node.
-  util.hlc.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
   // replica specifies the destination of the request.
   ReplicaDescriptor replica = 2 [(gogoproto.nullable) = false];
   // range_id specifies the ID of the Raft consensus group which the key
@@ -1547,14 +1547,14 @@ message BatchResponse {
     // timestamp is set only for non-transactional responses and denotes the
     // timestamp at which the batch executed. The timestamp cache is updated
     // at this timestamp.
-    util.hlc.Timestamp Timestamp = 2 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp Timestamp = 2 [(gogoproto.nullable) = false];
     // txn is non-nil if the request specified a non-nil
     // transaction. The transaction timestamp and/or priority may have
     // been updated, depending on the outcome of the request.
     Transaction txn = 3;
     // now is the highest current time from any node contacted during the request.
     // It can be used by the receiver to update its local HLC.
-    util.hlc.Timestamp now = 5 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp now = 5 [(gogoproto.nullable) = false];
     // collected_spans stores trace spans recorded during the execution of this
     // request.
     repeated util.tracing.RecordedSpan collected_spans = 6 [(gogoproto.nullable) = false];
@@ -1584,7 +1584,7 @@ message RangeFeedValue {
 // be emitted on the RangeFeed response stream.
 message RangeFeedCheckpoint {
   Span               span        = 1 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp resolved_ts = 2 [
+  util.hlc.hlcpb.Timestamp resolved_ts = 2 [
     (gogoproto.nullable) = false, (gogoproto.customname) = "ResolvedTS"];
 }
 

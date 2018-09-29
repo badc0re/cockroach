@@ -20,7 +20,7 @@ import "storage/engine/enginepb/mvcc.proto";
 import "roachpb/internal_raft.proto";
 import "roachpb/metadata.proto";
 import "roachpb/data.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 
 import "gogoproto/gogo.proto";
 
@@ -61,14 +61,14 @@ message ReplicaState {
   // gcThreshold is the GC threshold of the Range, typically updated when keys
   // are garbage collected. Reads and writes at timestamps <= this time will
   // not be served.
-  util.hlc.Timestamp gc_threshold = 6 [(gogoproto.customname) = "GCThreshold", (gogoproto.moretags) = "cockroachdb:\"randnullable\""];
+  util.hlc.hlcpb.Timestamp gc_threshold = 6 [(gogoproto.customname) = "GCThreshold", (gogoproto.moretags) = "cockroachdb:\"randnullable\""];
   storage.engine.enginepb.MVCCStats stats = 7;
   reserved 8;
   // txn_span_gc_threshold is the (maximum) timestamp below which transaction
   // records may have been garbage collected (as measured by txn.LastActive()).
   // Transaction at lower timestamps must not be allowed to write their initial
   // transaction entry.
-  util.hlc.Timestamp txn_span_gc_threshold = 9 [(gogoproto.customname) = "TxnSpanGCThreshold", (gogoproto.moretags) = "cockroachdb:\"randnullable\""];
+  util.hlc.hlcpb.Timestamp txn_span_gc_threshold = 9 [(gogoproto.customname) = "TxnSpanGCThreshold", (gogoproto.moretags) = "cockroachdb:\"randnullable\""];
   reserved 10;
   // using_applied_state_key specifies whether the Range has been upgraded
   // to begin using the RangeAppliedState key. This key holds a combination
@@ -110,12 +110,12 @@ message CommandQueuesSnapshot {
     string key = 2;
     string end_key = 3;
     bool readonly = 4;
-    util.hlc.Timestamp timestamp = 5 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp timestamp = 5 [(gogoproto.nullable) = false];
     repeated int64 prereqs = 6;
   }
 
   // Timestamp in nanoseconds when this snapshot was taken.
-  util.hlc.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 1 [(gogoproto.nullable) = false];
   // localScope and globalScope are maps from command ids to commands.
   map<int64, Command> localScope = 2 [(gogoproto.nullable) = false];
   map<int64, Command> globalScope = 3 [(gogoproto.nullable) = false];

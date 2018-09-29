@@ -18,7 +18,7 @@ package cockroach.storage.engine.enginepb;
 option go_package = "enginepb";
 
 import "storage/engine/enginepb/mvcc3.proto";
-import "util/hlc/legacy_timestamp.proto";
+import "util/hlc/hlcpb/legacy_timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // MVCCMetadata holds MVCC metadata for a key. Used by storage/engine/mvcc.go.
@@ -30,7 +30,7 @@ message MVCCMetadata {
   // value that may have multiple versions. For values which may have
   // only one version, the data is stored inline (via raw_bytes), and
   // timestamp is set to zero.
-  optional util.hlc.LegacyTimestamp timestamp = 2 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.LegacyTimestamp timestamp = 2 [(gogoproto.nullable) = false];
   // Is the most recent value a deletion tombstone?
   optional bool deleted = 3 [(gogoproto.nullable) = false];
   // The size in bytes of the most recent encoded key.
@@ -46,7 +46,7 @@ message MVCCMetadata {
   optional bytes raw_bytes = 6;
   // This provides a measure of protection against replays caused by
   // Raft duplicating merge commands.
-  optional util.hlc.LegacyTimestamp merge_timestamp = 7;
+  optional util.hlc.hlcpb.LegacyTimestamp merge_timestamp = 7;
 }
 
 // MVCCStats tracks byte and instance counts for various groups of keys,

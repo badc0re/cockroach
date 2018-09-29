@@ -77,7 +77,7 @@ WARN_UNUSED_RESULT bool SplitKey(rocksdb::Slice buf, rocksdb::Slice* key,
 WARN_UNUSED_RESULT bool DecodeTimestamp(rocksdb::Slice* timestamp, int64_t* wall_time,
                                         int32_t* logical);
 WARN_UNUSED_RESULT bool DecodeTimestamp(rocksdb::Slice buf,
-                                        cockroach::util::hlc::Timestamp* timestamp);
+                                        cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
 // EmptyTimestamp returns whether ts represents an empty timestamp where both
 // the wall_time and logical components are zero.

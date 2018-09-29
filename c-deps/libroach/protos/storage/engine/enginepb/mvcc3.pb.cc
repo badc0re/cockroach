@@ -24,9 +24,9 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2ep
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCWriteIntentOp;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCWriteValueOp;
 }  // namespace protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto
-namespace protobuf_util_2fhlc_2ftimestamp_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Timestamp;
-}  // namespace protobuf_util_2fhlc_2ftimestamp_2eproto
+namespace protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Timestamp;
+}  // namespace protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto
 namespace cockroach {
 namespace storage {
 namespace engine {
@@ -99,7 +99,7 @@ static void InitDefaultsTxnMeta() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_TxnMeta =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsTxnMeta}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsMVCCStatsDelta() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -157,7 +157,7 @@ static void InitDefaultsMVCCWriteValueOp() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCWriteValueOp =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsMVCCWriteValueOp}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsMVCCWriteIntentOp() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -172,7 +172,7 @@ static void InitDefaultsMVCCWriteIntentOp() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCWriteIntentOp =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsMVCCWriteIntentOp}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsMVCCUpdateIntentOp() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -187,7 +187,7 @@ static void InitDefaultsMVCCUpdateIntentOp() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCUpdateIntentOp =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsMVCCUpdateIntentOp}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsMVCCCommitIntentOp() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -202,7 +202,7 @@ static void InitDefaultsMVCCCommitIntentOp() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MVCCCommitIntentOp =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsMVCCCommitIntentOp}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsMVCCAbortIntentOp() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -259,8 +259,8 @@ namespace enginepb {
 // ===================================================================
 
 void TxnMeta::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_TxnMeta_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_TxnMeta_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void TxnMeta::clear_timestamp() {
   if (GetArenaNoVirtual() == NULL && timestamp_ != NULL) {
@@ -299,7 +299,7 @@ TxnMeta::TxnMeta(const TxnMeta& from)
     key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.key_);
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::Timestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
@@ -634,7 +634,7 @@ void TxnMeta::MergeFrom(const TxnMeta& from) {
     key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.key_);
   }
   if (from.has_timestamp()) {
-    mutable_timestamp()->::cockroach::util::hlc::Timestamp::MergeFrom(from.timestamp());
+    mutable_timestamp()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.timestamp());
   }
   if (from.isolation() != 0) {
     set_isolation(from.isolation());
@@ -2106,8 +2106,8 @@ void RangeAppliedState::InternalSwap(RangeAppliedState* other) {
 // ===================================================================
 
 void MVCCWriteValueOp::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_MVCCWriteValueOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCWriteValueOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void MVCCWriteValueOp::clear_timestamp() {
   if (GetArenaNoVirtual() == NULL && timestamp_ != NULL) {
@@ -2141,7 +2141,7 @@ MVCCWriteValueOp::MVCCWriteValueOp(const MVCCWriteValueOp& from)
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::Timestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
@@ -2340,7 +2340,7 @@ void MVCCWriteValueOp::MergeFrom(const MVCCWriteValueOp& from) {
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
   if (from.has_timestamp()) {
-    mutable_timestamp()->::cockroach::util::hlc::Timestamp::MergeFrom(from.timestamp());
+    mutable_timestamp()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.timestamp());
   }
 }
 
@@ -2377,8 +2377,8 @@ void MVCCWriteValueOp::InternalSwap(MVCCWriteValueOp* other) {
 // ===================================================================
 
 void MVCCWriteIntentOp::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_MVCCWriteIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCWriteIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void MVCCWriteIntentOp::clear_timestamp() {
   if (GetArenaNoVirtual() == NULL && timestamp_ != NULL) {
@@ -2412,7 +2412,7 @@ MVCCWriteIntentOp::MVCCWriteIntentOp(const MVCCWriteIntentOp& from)
     txn_key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txn_key_);
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::Timestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
@@ -2608,7 +2608,7 @@ void MVCCWriteIntentOp::MergeFrom(const MVCCWriteIntentOp& from) {
     txn_key_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txn_key_);
   }
   if (from.has_timestamp()) {
-    mutable_timestamp()->::cockroach::util::hlc::Timestamp::MergeFrom(from.timestamp());
+    mutable_timestamp()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.timestamp());
   }
 }
 
@@ -2645,8 +2645,8 @@ void MVCCWriteIntentOp::InternalSwap(MVCCWriteIntentOp* other) {
 // ===================================================================
 
 void MVCCUpdateIntentOp::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_MVCCUpdateIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCUpdateIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void MVCCUpdateIntentOp::clear_timestamp() {
   if (GetArenaNoVirtual() == NULL && timestamp_ != NULL) {
@@ -2675,7 +2675,7 @@ MVCCUpdateIntentOp::MVCCUpdateIntentOp(const MVCCUpdateIntentOp& from)
     txn_id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txn_id_);
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::Timestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
@@ -2839,7 +2839,7 @@ void MVCCUpdateIntentOp::MergeFrom(const MVCCUpdateIntentOp& from) {
     txn_id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txn_id_);
   }
   if (from.has_timestamp()) {
-    mutable_timestamp()->::cockroach::util::hlc::Timestamp::MergeFrom(from.timestamp());
+    mutable_timestamp()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.timestamp());
   }
 }
 
@@ -2874,8 +2874,8 @@ void MVCCUpdateIntentOp::InternalSwap(MVCCUpdateIntentOp* other) {
 // ===================================================================
 
 void MVCCCommitIntentOp::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_MVCCCommitIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCCommitIntentOp_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void MVCCCommitIntentOp::clear_timestamp() {
   if (GetArenaNoVirtual() == NULL && timestamp_ != NULL) {
@@ -2914,7 +2914,7 @@ MVCCCommitIntentOp::MVCCCommitIntentOp(const MVCCCommitIntentOp& from)
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::Timestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
@@ -3142,7 +3142,7 @@ void MVCCCommitIntentOp::MergeFrom(const MVCCCommitIntentOp& from) {
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
   if (from.has_timestamp()) {
-    mutable_timestamp()->::cockroach::util::hlc::Timestamp::MergeFrom(from.timestamp());
+    mutable_timestamp()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.timestamp());
   }
 }
 

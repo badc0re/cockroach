@@ -21,7 +21,7 @@ namespace cockroach {
 
 const DBTimestamp kZeroTimestamp = {0, 0};
 
-DBTimestamp ToDBTimestamp(const cockroach::util::hlc::LegacyTimestamp& timestamp) {
+DBTimestamp ToDBTimestamp(const cockroach::util::hlc::hlcpb::LegacyTimestamp& timestamp) {
   return DBTimestamp{timestamp.wall_time(), timestamp.logical()};
 }
 

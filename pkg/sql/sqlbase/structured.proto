@@ -17,7 +17,7 @@ syntax = "proto2";
 package cockroach.sql.sqlbase;
 option go_package = "sqlbase";
 
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "sql/sqlbase/privilege.proto";
 import "gogoproto/gogo.proto";
 
@@ -578,7 +578,7 @@ message TableDescriptor {
   optional bool up_version = 6 [(gogoproto.nullable) = false];
 
   // Last modification time of the table descriptor.
-  optional util.hlc.Timestamp modification_time = 7 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp modification_time = 7 [(gogoproto.nullable) = false];
   repeated ColumnDescriptor columns = 8 [(gogoproto.nullable) = false];
   // next_column_id is used to ensure that deleted column ids are not reused.
   optional uint32 next_column_id = 9 [(gogoproto.nullable) = false,
@@ -810,7 +810,7 @@ message TableDescriptor {
 
   message Replacement {
     optional uint32 id = 1 [(gogoproto.nullable) = false, (gogoproto.customname) = "ID", (gogoproto.casttype) = "ID"];
-    optional util.hlc.Timestamp time = 2 [(gogoproto.nullable) = false];
+    optional util.hlc.hlcpb.Timestamp time = 2 [(gogoproto.nullable) = false];
   }
 
   // ReplacementOf tracks prior IDs by which this table went -- e.g. when

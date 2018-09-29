@@ -62,7 +62,7 @@ type Clock struct {
 
 	mu struct {
 		syncutil.Mutex
-		timestamp Timestamp
+		timestamp hlcpb.Timestamp
 
 		// monotonicityErrorsCount indicate how often this clock was
 		// observed to jump backwards.

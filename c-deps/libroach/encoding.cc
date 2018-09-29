@@ -219,7 +219,7 @@ WARN_UNUSED_RESULT bool DecodeTimestamp(rocksdb::Slice* timestamp, int64_t* wall
 }
 
 WARN_UNUSED_RESULT bool DecodeTimestamp(rocksdb::Slice buf,
-                                        cockroach::util::hlc::Timestamp* timestamp) {
+                                        cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   int64_t wall_time;
   int32_t logical;
   if (!DecodeTimestamp(&buf, &wall_time, &logical)) {

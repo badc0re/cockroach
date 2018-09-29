@@ -29,7 +29,7 @@
 #include <google/protobuf/message_lite.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include "util/hlc/timestamp.pb.h"
+#include "util/hlc/hlcpb/timestamp.pb.h"
 // @@protoc_insertion_point(includes)
 #define PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2frocksdb_2eproto 
 
@@ -170,37 +170,37 @@ class SSTUserProperties : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::std::string* release_path();
   void set_allocated_path(::std::string* path);
 
-  // .cockroach.util.hlc.Timestamp ts_min = 2;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_min = 2;
   bool has_ts_min() const;
   void clear_ts_min();
   static const int kTsMinFieldNumber = 2;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_ts_min() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_ts_min() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& ts_min() const;
-  ::cockroach::util::hlc::Timestamp* release_ts_min();
-  ::cockroach::util::hlc::Timestamp* mutable_ts_min();
-  void set_allocated_ts_min(::cockroach::util::hlc::Timestamp* ts_min);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& ts_min() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_ts_min();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_ts_min();
+  void set_allocated_ts_min(::cockroach::util::hlc::hlcpb::Timestamp* ts_min);
 
-  // .cockroach.util.hlc.Timestamp ts_max = 3;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_max = 3;
   bool has_ts_max() const;
   void clear_ts_max();
   static const int kTsMaxFieldNumber = 3;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_ts_max() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_ts_max() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& ts_max() const;
-  ::cockroach::util::hlc::Timestamp* release_ts_max();
-  ::cockroach::util::hlc::Timestamp* mutable_ts_max();
-  void set_allocated_ts_max(::cockroach::util::hlc::Timestamp* ts_max);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& ts_max() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_ts_max();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_ts_max();
+  void set_allocated_ts_max(::cockroach::util::hlc::hlcpb::Timestamp* ts_max);
 
   // @@protoc_insertion_point(class_scope:cockroach.storage.engine.enginepb.SSTUserProperties)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr path_;
-  ::cockroach::util::hlc::Timestamp* ts_min_;
-  ::cockroach::util::hlc::Timestamp* ts_max_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* ts_min_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* ts_max_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_storage_2fengine_2fenginepb_2frocksdb_2eproto::TableStruct;
 };
@@ -389,36 +389,36 @@ inline void SSTUserProperties::set_allocated_path(::std::string* path) {
   // @@protoc_insertion_point(field_set_allocated:cockroach.storage.engine.enginepb.SSTUserProperties.path)
 }
 
-// .cockroach.util.hlc.Timestamp ts_min = 2;
+// .cockroach.util.hlc.hlcpb.Timestamp ts_min = 2;
 inline bool SSTUserProperties::has_ts_min() const {
   return this != internal_default_instance() && ts_min_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& SSTUserProperties::_internal_ts_min() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& SSTUserProperties::_internal_ts_min() const {
   return *ts_min_;
 }
-inline const ::cockroach::util::hlc::Timestamp& SSTUserProperties::ts_min() const {
-  const ::cockroach::util::hlc::Timestamp* p = ts_min_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& SSTUserProperties::ts_min() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = ts_min_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.SSTUserProperties.ts_min)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* SSTUserProperties::release_ts_min() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* SSTUserProperties::release_ts_min() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.SSTUserProperties.ts_min)
   
-  ::cockroach::util::hlc::Timestamp* temp = ts_min_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = ts_min_;
   ts_min_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* SSTUserProperties::mutable_ts_min() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* SSTUserProperties::mutable_ts_min() {
   
   if (ts_min_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     ts_min_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.SSTUserProperties.ts_min)
   return ts_min_;
 }
-inline void SSTUserProperties::set_allocated_ts_min(::cockroach::util::hlc::Timestamp* ts_min) {
+inline void SSTUserProperties::set_allocated_ts_min(::cockroach::util::hlc::hlcpb::Timestamp* ts_min) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(ts_min_);
@@ -437,36 +437,36 @@ inline void SSTUserProperties::set_allocated_ts_min(::cockroach::util::hlc::Time
   // @@protoc_insertion_point(field_set_allocated:cockroach.storage.engine.enginepb.SSTUserProperties.ts_min)
 }
 
-// .cockroach.util.hlc.Timestamp ts_max = 3;
+// .cockroach.util.hlc.hlcpb.Timestamp ts_max = 3;
 inline bool SSTUserProperties::has_ts_max() const {
   return this != internal_default_instance() && ts_max_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& SSTUserProperties::_internal_ts_max() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& SSTUserProperties::_internal_ts_max() const {
   return *ts_max_;
 }
-inline const ::cockroach::util::hlc::Timestamp& SSTUserProperties::ts_max() const {
-  const ::cockroach::util::hlc::Timestamp* p = ts_max_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& SSTUserProperties::ts_max() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = ts_max_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.SSTUserProperties.ts_max)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* SSTUserProperties::release_ts_max() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* SSTUserProperties::release_ts_max() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.SSTUserProperties.ts_max)
   
-  ::cockroach::util::hlc::Timestamp* temp = ts_max_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = ts_max_;
   ts_max_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* SSTUserProperties::mutable_ts_max() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* SSTUserProperties::mutable_ts_max() {
   
   if (ts_max_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     ts_max_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.SSTUserProperties.ts_max)
   return ts_max_;
 }
-inline void SSTUserProperties::set_allocated_ts_max(::cockroach::util::hlc::Timestamp* ts_max) {
+inline void SSTUserProperties::set_allocated_ts_max(::cockroach::util::hlc::hlcpb::Timestamp* ts_max) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(ts_max_);

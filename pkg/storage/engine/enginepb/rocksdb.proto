@@ -16,16 +16,16 @@ syntax = "proto3";
 package cockroach.storage.engine.enginepb;
 option go_package = "enginepb";
 
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // SSTUserProperties contains the user-added properties of a single sstable.
 message SSTUserProperties {
     string path = 1;
     // ts_min is the minimum mvcc timestamp present in this sstable.
-    util.hlc.Timestamp ts_min = 2;
+    util.hlc.hlcpb.Timestamp ts_min = 2;
     // ts_max is the maximum mvcc timestamp present in this sstable.
-    util.hlc.Timestamp ts_max = 3;
+    util.hlc.hlcpb.Timestamp ts_max = 3;
 }
 
 // SSTUserPropertiesCollection contains the user-added properties of every

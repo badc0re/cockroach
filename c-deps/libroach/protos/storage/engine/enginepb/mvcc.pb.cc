@@ -19,9 +19,9 @@
 namespace protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_TxnMeta;
 }  // namespace protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto
-namespace protobuf_util_2fhlc_2flegacy_5ftimestamp_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2flegacy_5ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_LegacyTimestamp;
-}  // namespace protobuf_util_2fhlc_2flegacy_5ftimestamp_2eproto
+namespace protobuf_util_2fhlc_2fhlcpb_2flegacy_5ftimestamp_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2fhlcpb_2flegacy_5ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_LegacyTimestamp;
+}  // namespace protobuf_util_2fhlc_2fhlcpb_2flegacy_5ftimestamp_2eproto
 namespace cockroach {
 namespace storage {
 namespace engine {
@@ -55,7 +55,7 @@ static void InitDefaultsMVCCMetadata() {
 ::google::protobuf::internal::SCCInfo<2> scc_info_MVCCMetadata =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsMVCCMetadata}, {
       &protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto::scc_info_TxnMeta.base,
-      &protobuf_util_2fhlc_2flegacy_5ftimestamp_2eproto::scc_info_LegacyTimestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2flegacy_5ftimestamp_2eproto::scc_info_LegacyTimestamp.base,}};
 
 static void InitDefaultsMVCCStats() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -87,10 +87,10 @@ namespace enginepb {
 void MVCCMetadata::InitAsDefaultInstance() {
   ::cockroach::storage::engine::enginepb::_MVCCMetadata_default_instance_._instance.get_mutable()->txn_ = const_cast< ::cockroach::storage::engine::enginepb::TxnMeta*>(
       ::cockroach::storage::engine::enginepb::TxnMeta::internal_default_instance());
-  ::cockroach::storage::engine::enginepb::_MVCCMetadata_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::LegacyTimestamp*>(
-      ::cockroach::util::hlc::LegacyTimestamp::internal_default_instance());
-  ::cockroach::storage::engine::enginepb::_MVCCMetadata_default_instance_._instance.get_mutable()->merge_timestamp_ = const_cast< ::cockroach::util::hlc::LegacyTimestamp*>(
-      ::cockroach::util::hlc::LegacyTimestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCMetadata_default_instance_._instance.get_mutable()->timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::LegacyTimestamp*>(
+      ::cockroach::util::hlc::hlcpb::LegacyTimestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_MVCCMetadata_default_instance_._instance.get_mutable()->merge_timestamp_ = const_cast< ::cockroach::util::hlc::hlcpb::LegacyTimestamp*>(
+      ::cockroach::util::hlc::hlcpb::LegacyTimestamp::internal_default_instance());
 }
 void MVCCMetadata::clear_txn() {
   if (txn_ != NULL) txn_->Clear();
@@ -136,12 +136,12 @@ MVCCMetadata::MVCCMetadata(const MVCCMetadata& from)
     txn_ = NULL;
   }
   if (from.has_timestamp()) {
-    timestamp_ = new ::cockroach::util::hlc::LegacyTimestamp(*from.timestamp_);
+    timestamp_ = new ::cockroach::util::hlc::hlcpb::LegacyTimestamp(*from.timestamp_);
   } else {
     timestamp_ = NULL;
   }
   if (from.has_merge_timestamp()) {
-    merge_timestamp_ = new ::cockroach::util::hlc::LegacyTimestamp(*from.merge_timestamp_);
+    merge_timestamp_ = new ::cockroach::util::hlc::hlcpb::LegacyTimestamp(*from.merge_timestamp_);
   } else {
     merge_timestamp_ = NULL;
   }
@@ -302,7 +302,7 @@ bool MVCCMetadata::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .cockroach.util.hlc.LegacyTimestamp merge_timestamp = 7;
+      // optional .cockroach.util.hlc.hlcpb.LegacyTimestamp merge_timestamp = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
@@ -370,7 +370,7 @@ void MVCCMetadata::SerializeWithCachedSizes(
       6, this->raw_bytes(), output);
   }
 
-  // optional .cockroach.util.hlc.LegacyTimestamp merge_timestamp = 7;
+  // optional .cockroach.util.hlc.hlcpb.LegacyTimestamp merge_timestamp = 7;
   if (cached_has_bits & 0x00000008u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       7, this->_internal_merge_timestamp(), output);
@@ -408,7 +408,7 @@ size_t MVCCMetadata::ByteSizeLong() const {
           *timestamp_);
     }
 
-    // optional .cockroach.util.hlc.LegacyTimestamp merge_timestamp = 7;
+    // optional .cockroach.util.hlc.hlcpb.LegacyTimestamp merge_timestamp = 7;
     if (has_merge_timestamp()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -459,10 +459,10 @@ void MVCCMetadata::MergeFrom(const MVCCMetadata& from) {
       mutable_txn()->::cockroach::storage::engine::enginepb::TxnMeta::MergeFrom(from.txn());
     }
     if (cached_has_bits & 0x00000004u) {
-      mutable_timestamp()->::cockroach::util::hlc::LegacyTimestamp::MergeFrom(from.timestamp());
+      mutable_timestamp()->::cockroach::util::hlc::hlcpb::LegacyTimestamp::MergeFrom(from.timestamp());
     }
     if (cached_has_bits & 0x00000008u) {
-      mutable_merge_timestamp()->::cockroach::util::hlc::LegacyTimestamp::MergeFrom(from.merge_timestamp());
+      mutable_merge_timestamp()->::cockroach::util::hlc::hlcpb::LegacyTimestamp::MergeFrom(from.merge_timestamp());
     }
     if (cached_has_bits & 0x00000010u) {
       key_bytes_ = from.key_bytes_;

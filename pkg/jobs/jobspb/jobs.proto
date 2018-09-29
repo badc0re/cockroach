@@ -20,7 +20,7 @@ import "gogoproto/gogo.proto";
 import "roachpb/data.proto";
 import "roachpb/io-formats.proto";
 import "sql/sqlbase/structured.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 
 message Lease {
   option (gogoproto.equal) = true;
@@ -35,8 +35,8 @@ message Lease {
 }
 
 message BackupDetails {
-  util.hlc.Timestamp start_time = 1 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp end_time = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp start_time = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp end_time = 2 [(gogoproto.nullable) = false];
   string uri = 3 [(gogoproto.customname) = "URI"];
   bytes backup_descriptor = 4;
 }
@@ -57,7 +57,7 @@ message RestoreDetails {
     ];
   }
   reserved 1;
-  util.hlc.Timestamp end_time = 4 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp end_time = 4 [(gogoproto.nullable) = false];
   map<uint32, TableRewrite> table_rewrites = 2 [
     (gogoproto.castkey) = "github.com/cockroachdb/cockroach/pkg/sql/sqlbase.ID"
   ];
@@ -126,7 +126,7 @@ message DroppedTableDetails {
 }
 
 message SchemaChangeDetails {
-  util.hlc.Timestamp read_as_of = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp read_as_of = 1 [(gogoproto.nullable) = false];
   // A schema change can involve running multiple processors backfilling
   // or deleting data. They occasionally checkpoint Spans so that the
   // processing can resume in the event of a node failure. The spans are
@@ -172,14 +172,14 @@ message ChangefeedDetails {
   ];
   string sink_uri = 3 [(gogoproto.customname) = "SinkURI"];
   map<string, string> opts = 4;
-  util.hlc.Timestamp statement_time = 7 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp statement_time = 7 [(gogoproto.nullable) = false];
 
   reserved 1, 2, 5;
 }
 
 message ResolvedSpan {
   roachpb.Span span = 1 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
 }
 
 message ChangefeedProgress {
@@ -216,7 +216,7 @@ message Payload {
 message Progress {
   oneof progress {
     float fraction_completed = 1;
-    util.hlc.Timestamp high_water = 3;
+    util.hlc.hlcpb.Timestamp high_water = 3;
   }
   int64 modified_micros = 2;
   string running_status = 4;

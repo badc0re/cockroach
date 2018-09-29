@@ -13,8 +13,8 @@
 // permissions and limitations under the License.
 
 syntax = "proto2";
-package cockroach.util.hlc;
-option go_package = "hlc";
+package cockroach.util.hlc.hlcpb;
+option go_package = "hlcpb";
 
 import "gogoproto/gogo.proto";
 

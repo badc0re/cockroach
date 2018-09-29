@@ -17,7 +17,7 @@ package cockroach.gossip;
 option go_package = "gossip";
 
 import "roachpb/data.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "util/unresolved_addr.proto";
 import "gogoproto/gogo.proto";
 
@@ -27,7 +27,7 @@ message BootstrapInfo {
   // Addresses of other nodes in the cluster.
   repeated util.UnresolvedAddr addresses = 1 [(gogoproto.nullable) = false];
   // Timestamp at which the bootstrap info was written.
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
 }
 
 // Request is the request struct passed with the Gossip RPC.

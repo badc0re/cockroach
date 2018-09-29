@@ -14,7 +14,7 @@ import "build/info.proto";
 import "roachpb/api.proto";
 import "roachpb/data.proto";
 import "sql/sqlbase/structured.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 enum MVCCFilter {
@@ -41,22 +41,22 @@ message BackupDescriptor {
 
     // StartTime 0 is sometimes legitimately used, so it is only meaningful if
     // EndTime is non-zero, otherwise both just inherit from containing backup.
-    util.hlc.Timestamp start_time = 7 [(gogoproto.nullable) = false];
-    util.hlc.Timestamp end_time = 8 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp start_time = 7 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp end_time = 8 [(gogoproto.nullable) = false];
   }
 
   message DescriptorRevision {
-    util.hlc.Timestamp time = 1 [(gogoproto.nullable) = false];
+    util.hlc.hlcpb.Timestamp time = 1 [(gogoproto.nullable) = false];
     uint32 ID = 2 [(gogoproto.casttype) = "github.com/cockroachdb/cockroach/pkg/sql/sqlbase.ID"];
     sql.sqlbase.Descriptor desc = 3;
   }
 
-  util.hlc.Timestamp start_time = 1 [(gogoproto.nullable) = false];
-  util.hlc.Timestamp end_time = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp start_time = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp end_time = 2 [(gogoproto.nullable) = false];
   MVCCFilter mvcc_filter = 13 [(gogoproto.customname) = "MVCCFilter"];
   // Even if StartTime is zero, we only get revisions since gc threshold, so
   // do not allow AS OF SYSTEM TIME before revision_start_time.
-  util.hlc.Timestamp revision_start_time = 17 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp revision_start_time = 17 [(gogoproto.nullable) = false];
 
   // Spans contains the spans requested for backup. The keyranges covered by
   // `files` may be a subset of this if there were ranges with no changes since

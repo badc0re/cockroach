@@ -29,7 +29,7 @@ import "sql/sqlbase/structured.proto";
 import "sql/sqlbase/encoded_datum.proto";
 import "sql/sqlbase/join_type.proto";
 import "sql/distsqlrun/data.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 
@@ -583,7 +583,7 @@ message BackfillerSpec {
   repeated sqlbase.TableDescriptor other_tables = 6 [(gogoproto.nullable) = false];
 
   // The timestamp to perform index backfill historical scans at.
-  optional util.hlc.Timestamp readAsOf = 7 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp readAsOf = 7 [(gogoproto.nullable) = false];
 }
 
 // FlowSpec describes a "flow" which is a subgraph of a distributed SQL
@@ -966,7 +966,7 @@ message WindowerSpec {
 // changes in a set of spans. Each span may cross multiple ranges.
 message ChangeAggregatorSpec {
   message Watch {
-    optional util.hlc.Timestamp initial_resolved = 1 [(gogoproto.nullable) = false];
+    optional util.hlc.hlcpb.Timestamp initial_resolved = 1 [(gogoproto.nullable) = false];
     optional roachpb.Span span = 2 [(gogoproto.nullable) = false];
   }
   repeated Watch watches = 1 [(gogoproto.nullable) = false];

@@ -19,9 +19,9 @@
 namespace protobuf_storage_2fengine_2fenginepb_2frocksdb_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2frocksdb_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_SSTUserProperties;
 }  // namespace protobuf_storage_2fengine_2fenginepb_2frocksdb_2eproto
-namespace protobuf_util_2fhlc_2ftimestamp_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Timestamp;
-}  // namespace protobuf_util_2fhlc_2ftimestamp_2eproto
+namespace protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Timestamp;
+}  // namespace protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto
 namespace cockroach {
 namespace storage {
 namespace engine {
@@ -54,7 +54,7 @@ static void InitDefaultsSSTUserProperties() {
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_SSTUserProperties =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsSSTUserProperties}, {
-      &protobuf_util_2fhlc_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
+      &protobuf_util_2fhlc_2fhlcpb_2ftimestamp_2eproto::scc_info_Timestamp.base,}};
 
 static void InitDefaultsSSTUserPropertiesCollection() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -85,10 +85,10 @@ namespace enginepb {
 // ===================================================================
 
 void SSTUserProperties::InitAsDefaultInstance() {
-  ::cockroach::storage::engine::enginepb::_SSTUserProperties_default_instance_._instance.get_mutable()->ts_min_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
-  ::cockroach::storage::engine::enginepb::_SSTUserProperties_default_instance_._instance.get_mutable()->ts_max_ = const_cast< ::cockroach::util::hlc::Timestamp*>(
-      ::cockroach::util::hlc::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_SSTUserProperties_default_instance_._instance.get_mutable()->ts_min_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
+  ::cockroach::storage::engine::enginepb::_SSTUserProperties_default_instance_._instance.get_mutable()->ts_max_ = const_cast< ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      ::cockroach::util::hlc::hlcpb::Timestamp::internal_default_instance());
 }
 void SSTUserProperties::clear_ts_min() {
   if (GetArenaNoVirtual() == NULL && ts_min_ != NULL) {
@@ -124,12 +124,12 @@ SSTUserProperties::SSTUserProperties(const SSTUserProperties& from)
     path_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.path_);
   }
   if (from.has_ts_min()) {
-    ts_min_ = new ::cockroach::util::hlc::Timestamp(*from.ts_min_);
+    ts_min_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.ts_min_);
   } else {
     ts_min_ = NULL;
   }
   if (from.has_ts_max()) {
-    ts_max_ = new ::cockroach::util::hlc::Timestamp(*from.ts_max_);
+    ts_max_ = new ::cockroach::util::hlc::hlcpb::Timestamp(*from.ts_max_);
   } else {
     ts_max_ = NULL;
   }
@@ -213,7 +213,7 @@ bool SSTUserProperties::MergePartialFromCodedStream(
         break;
       }
 
-      // .cockroach.util.hlc.Timestamp ts_min = 2;
+      // .cockroach.util.hlc.hlcpb.Timestamp ts_min = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -225,7 +225,7 @@ bool SSTUserProperties::MergePartialFromCodedStream(
         break;
       }
 
-      // .cockroach.util.hlc.Timestamp ts_max = 3;
+      // .cockroach.util.hlc.hlcpb.Timestamp ts_max = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -273,13 +273,13 @@ void SSTUserProperties::SerializeWithCachedSizes(
       1, this->path(), output);
   }
 
-  // .cockroach.util.hlc.Timestamp ts_min = 2;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_min = 2;
   if (this->has_ts_min()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       2, this->_internal_ts_min(), output);
   }
 
-  // .cockroach.util.hlc.Timestamp ts_max = 3;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_max = 3;
   if (this->has_ts_max()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_ts_max(), output);
@@ -303,14 +303,14 @@ size_t SSTUserProperties::ByteSizeLong() const {
         this->path());
   }
 
-  // .cockroach.util.hlc.Timestamp ts_min = 2;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_min = 2;
   if (this->has_ts_min()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *ts_min_);
   }
 
-  // .cockroach.util.hlc.Timestamp ts_max = 3;
+  // .cockroach.util.hlc.hlcpb.Timestamp ts_max = 3;
   if (this->has_ts_max()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -339,10 +339,10 @@ void SSTUserProperties::MergeFrom(const SSTUserProperties& from) {
     path_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.path_);
   }
   if (from.has_ts_min()) {
-    mutable_ts_min()->::cockroach::util::hlc::Timestamp::MergeFrom(from.ts_min());
+    mutable_ts_min()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.ts_min());
   }
   if (from.has_ts_max()) {
-    mutable_ts_max()->::cockroach::util::hlc::Timestamp::MergeFrom(from.ts_max());
+    mutable_ts_max()->::cockroach::util::hlc::hlcpb::Timestamp::MergeFrom(from.ts_max());
   }
 }
 

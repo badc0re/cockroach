@@ -16,7 +16,7 @@ syntax = "proto2";
 package cockroach.client;
 option go_package = "client";
 
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 message LeaseVal {
@@ -24,5 +24,5 @@ message LeaseVal {
   // owns the lease.
   optional string owner = 1 [(gogoproto.nullable) = false];
   // The expiration time of the lease.
-  optional util.hlc.Timestamp expiration = 2 [(gogoproto.nullable) = false];
+  optional util.hlc.hlcpb.Timestamp expiration = 2 [(gogoproto.nullable) = false];
 }

@@ -19,7 +19,7 @@ option go_package = "roachpb";
 import "roachpb/metadata.proto";
 import "storage/engine/enginepb/mvcc.proto";
 import "storage/engine/enginepb/mvcc3.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // Span is a key range with an inclusive start Key and an exclusive end Key.
@@ -88,7 +88,7 @@ message Value {
   // raw_bytes contains the encoded value and checksum.
   bytes raw_bytes = 1;
   // Timestamp of value.
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
 }
 
 // KeyValue is a pair of Key and Value for returned Key/Value pairs
@@ -148,7 +148,7 @@ message MergeTrigger {
   // before it stopped responding to requests altogether (in anticipation of
   // being subsumed). It is suitable for use as the timestamp cache's low water
   // mark for the keys previously owned by the subsumed range.
-  util.hlc.Timestamp freeze_start = 5 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp freeze_start = 5 [(gogoproto.nullable) = false];
 }
 
 // ReplicaChangeType is a parameter of ChangeReplicasTrigger.
@@ -234,7 +234,7 @@ message ObservedTimestamp {
   option (gogoproto.populate) = true;
 
   int32 node_id = 1 [(gogoproto.customname) = "NodeID", (gogoproto.casttype) = "NodeID"];
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
 }
 
 // A Transaction is a unit of work performed on the database.
@@ -257,7 +257,7 @@ message Transaction {
   // A free-text identifier for debug purposes.
   string name = 2;
   TransactionStatus status = 4;
-  util.hlc.Timestamp last_heartbeat = 5 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp last_heartbeat = 5 [(gogoproto.nullable) = false];
   // The original timestamp at which the transaction started. For serializable
   // transactions, if the timestamp drifts from the original timestamp, the
   // transaction will retry unless we manage to "refresh the reads" - see
@@ -299,14 +299,14 @@ message Transaction {
   // Again, keep in mind that, when the transaction commits, all the intents are
   // bumped to the commit timestamp (otherwise, pushing a transaction wouldn't
   // achieve anything).
-  util.hlc.Timestamp orig_timestamp = 6 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp orig_timestamp = 6 [(gogoproto.nullable) = false];
   // Initial Timestamp + clock skew. Reads which encounter values with
   // timestamps between timestamp and max_timestamp trigger a txn
   // retry error, unless the node being read is listed in observed_timestamps
   // (in which case no more read uncertainty can occur).
   // The case max_timestamp < timestamp is possible for transactions which have
   // been pushed; in this case, max_timestamp should be ignored.
-  util.hlc.Timestamp max_timestamp = 7 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp max_timestamp = 7 [(gogoproto.nullable) = false];
   // The refreshed timestamp is the timestamp at which the transaction
   // can commit without necessitating a serializable restart. This
   // value is forwarded to the transaction's current timestamp (meta.timestamp)
@@ -319,7 +319,7 @@ message Transaction {
   // orig_timestamp needs to be used as a lower bound timestamp for the
   // time-bound iterator used to resolve intents - i.e. there can be intents to
   // resolve up to the timestamp that the txn started with.
-  util.hlc.Timestamp refreshed_timestamp = 15 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp refreshed_timestamp = 15 [(gogoproto.nullable) = false];
   // A list of <NodeID, timestamp> pairs. The list maps NodeIDs to timestamps
   // as observed from their local clock during this transaction. The purpose of
   // this map is to avoid uncertainty related restarts which normally occur
@@ -387,7 +387,7 @@ message Transaction {
   // that any epoch of the transaction used. This is set only if the
   // transaction is restarted and the epoch is bumped. It is used during
   // intent resolution to more efficiently scan for intents.
-  util.hlc.Timestamp epoch_zero_timestamp = 14 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp epoch_zero_timestamp = 14 [(gogoproto.nullable) = false];
   // This flag is set if the transaction's original timestamp was
   // "leaked" beyond the transaction (i.e. if returned via NOW() or
   // transaction_timestamp()). If true, this prevents optimizations
@@ -426,17 +426,17 @@ message Lease {
   // The start is a timestamp at which the lease begins. This value
   // must be greater than the last lease expiration or the lease request
   // is considered invalid.
-  util.hlc.Timestamp start = 1 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp start = 1 [(gogoproto.nullable) = false];
 
   // The expiration is a timestamp at which the lease expires. This means that
   // a new lease can be granted for a later timestamp.
-  util.hlc.Timestamp expiration = 2 [(gogoproto.moretags) = "cockroachdb:\"randnullable\""];
+  util.hlc.hlcpb.Timestamp expiration = 2 [(gogoproto.moretags) = "cockroachdb:\"randnullable\""];
 
   // The address of the would-be lease holder.
   ReplicaDescriptor replica = 3 [(gogoproto.nullable) = false];
 
   // The start of the lease stasis period. This field is deprecated.
-  util.hlc.Timestamp deprecated_start_stasis = 4 [(gogoproto.moretags) = "cockroachdb:\"randnullable\""];
+  util.hlc.hlcpb.Timestamp deprecated_start_stasis = 4 [(gogoproto.moretags) = "cockroachdb:\"randnullable\""];
 
   // The current timestamp when this lease has been proposed. Used after a
   // transfer and after a node restart to enforce that a node only uses leases
@@ -444,7 +444,7 @@ message Lease {
   // to help with the rollout (such that a lease applied by some nodes before
   // the rollout and some nodes after the rollout is serialized the same).
   // TODO(andrei): Make this non-nullable after the rollout.
-  util.hlc.Timestamp proposed_ts  = 5 [(gogoproto.customname) = "ProposedTS"];
+  util.hlc.hlcpb.Timestamp proposed_ts  = 5 [(gogoproto.customname) = "ProposedTS"];
 
   // The epoch of the lease holder's node liveness entry. If this value
   // is non-zero, the start and expiration values are ignored.
@@ -476,7 +476,7 @@ message AbortSpanEntry {
   bytes key = 1 [(gogoproto.casttype) = "Key"];
   // The candidate commit timestamp the transaction record held at the time
   // it was aborted.
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
   // The priority of the transaction.
   int32 priority = 3;
 }

@@ -18,7 +18,7 @@ option go_package = "storage";
 
 import "roachpb/data.proto";
 import "storage/liveness.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 
 import "gogoproto/gogo.proto";
 
@@ -43,7 +43,7 @@ message LeaseStatus {
   // Lease which this status describes.
   roachpb.Lease lease = 1 [(gogoproto.nullable) = false];
   // Timestamp that the lease was evaluated at.
-  util.hlc.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
+  util.hlc.hlcpb.Timestamp timestamp = 2 [(gogoproto.nullable) = false];
   // State of the lease at timestamp.
   LeaseState state = 3;
   // Liveness if this is an epoch-based lease.

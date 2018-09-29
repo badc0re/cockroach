@@ -29,7 +29,7 @@
 #include <google/protobuf/message_lite.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include "util/hlc/timestamp.pb.h"
+#include "util/hlc/hlcpb/timestamp.pb.h"
 #include "storage/engine/isolation/isolation.pb.h"
 // @@protoc_insertion_point(includes)
 #define PROTOBUF_INTERNAL_EXPORT_protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto 
@@ -220,12 +220,12 @@ class TxnMeta : public ::google::protobuf::MessageLite /* @@protoc_insertion_poi
   void clear_timestamp();
   static const int kTimestampFieldNumber = 5;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_timestamp() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_timestamp() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& timestamp() const;
-  ::cockroach::util::hlc::Timestamp* release_timestamp();
-  ::cockroach::util::hlc::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& timestamp() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_timestamp();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_timestamp();
+  void set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
   // .cockroach.storage.engine.isolation.IsolationType isolation = 2;
   void clear_isolation();
@@ -263,7 +263,7 @@ class TxnMeta : public ::google::protobuf::MessageLite /* @@protoc_insertion_poi
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr key_;
-  ::cockroach::util::hlc::Timestamp* timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* timestamp_;
   int isolation_;
   ::google::protobuf::uint32 epoch_;
   ::google::protobuf::int32 priority_;
@@ -893,12 +893,12 @@ class MVCCWriteValueOp : public ::google::protobuf::MessageLite /* @@protoc_inse
   void clear_timestamp();
   static const int kTimestampFieldNumber = 2;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_timestamp() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_timestamp() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& timestamp() const;
-  ::cockroach::util::hlc::Timestamp* release_timestamp();
-  ::cockroach::util::hlc::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& timestamp() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_timestamp();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_timestamp();
+  void set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
   // @@protoc_insertion_point(class_scope:cockroach.storage.engine.enginepb.MVCCWriteValueOp)
  private:
@@ -906,7 +906,7 @@ class MVCCWriteValueOp : public ::google::protobuf::MessageLite /* @@protoc_inse
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr key_;
   ::google::protobuf::internal::ArenaStringPtr value_;
-  ::cockroach::util::hlc::Timestamp* timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* timestamp_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto::TableStruct;
 };
@@ -1028,12 +1028,12 @@ class MVCCWriteIntentOp : public ::google::protobuf::MessageLite /* @@protoc_ins
   void clear_timestamp();
   static const int kTimestampFieldNumber = 3;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_timestamp() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_timestamp() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& timestamp() const;
-  ::cockroach::util::hlc::Timestamp* release_timestamp();
-  ::cockroach::util::hlc::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& timestamp() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_timestamp();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_timestamp();
+  void set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
   // @@protoc_insertion_point(class_scope:cockroach.storage.engine.enginepb.MVCCWriteIntentOp)
  private:
@@ -1041,7 +1041,7 @@ class MVCCWriteIntentOp : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr txn_id_;
   ::google::protobuf::internal::ArenaStringPtr txn_key_;
-  ::cockroach::util::hlc::Timestamp* timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* timestamp_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto::TableStruct;
 };
@@ -1149,19 +1149,19 @@ class MVCCUpdateIntentOp : public ::google::protobuf::MessageLite /* @@protoc_in
   void clear_timestamp();
   static const int kTimestampFieldNumber = 2;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_timestamp() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_timestamp() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& timestamp() const;
-  ::cockroach::util::hlc::Timestamp* release_timestamp();
-  ::cockroach::util::hlc::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& timestamp() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_timestamp();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_timestamp();
+  void set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
   // @@protoc_insertion_point(class_scope:cockroach.storage.engine.enginepb.MVCCUpdateIntentOp)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr txn_id_;
-  ::cockroach::util::hlc::Timestamp* timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* timestamp_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto::TableStruct;
 };
@@ -1297,12 +1297,12 @@ class MVCCCommitIntentOp : public ::google::protobuf::MessageLite /* @@protoc_in
   void clear_timestamp();
   static const int kTimestampFieldNumber = 3;
   private:
-  const ::cockroach::util::hlc::Timestamp& _internal_timestamp() const;
+  const ::cockroach::util::hlc::hlcpb::Timestamp& _internal_timestamp() const;
   public:
-  const ::cockroach::util::hlc::Timestamp& timestamp() const;
-  ::cockroach::util::hlc::Timestamp* release_timestamp();
-  ::cockroach::util::hlc::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp);
+  const ::cockroach::util::hlc::hlcpb::Timestamp& timestamp() const;
+  ::cockroach::util::hlc::hlcpb::Timestamp* release_timestamp();
+  ::cockroach::util::hlc::hlcpb::Timestamp* mutable_timestamp();
+  void set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp);
 
   // @@protoc_insertion_point(class_scope:cockroach.storage.engine.enginepb.MVCCCommitIntentOp)
  private:
@@ -1311,7 +1311,7 @@ class MVCCCommitIntentOp : public ::google::protobuf::MessageLite /* @@protoc_in
   ::google::protobuf::internal::ArenaStringPtr txn_id_;
   ::google::protobuf::internal::ArenaStringPtr key_;
   ::google::protobuf::internal::ArenaStringPtr value_;
-  ::cockroach::util::hlc::Timestamp* timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* timestamp_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_storage_2fengine_2fenginepb_2fmvcc3_2eproto::TableStruct;
 };
@@ -1729,32 +1729,32 @@ inline void TxnMeta::set_epoch(::google::protobuf::uint32 value) {
 inline bool TxnMeta::has_timestamp() const {
   return this != internal_default_instance() && timestamp_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& TxnMeta::_internal_timestamp() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& TxnMeta::_internal_timestamp() const {
   return *timestamp_;
 }
-inline const ::cockroach::util::hlc::Timestamp& TxnMeta::timestamp() const {
-  const ::cockroach::util::hlc::Timestamp* p = timestamp_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& TxnMeta::timestamp() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = timestamp_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.TxnMeta.timestamp)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* TxnMeta::release_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* TxnMeta::release_timestamp() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.TxnMeta.timestamp)
   
-  ::cockroach::util::hlc::Timestamp* temp = timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = timestamp_;
   timestamp_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* TxnMeta::mutable_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* TxnMeta::mutable_timestamp() {
   
   if (timestamp_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     timestamp_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.TxnMeta.timestamp)
   return timestamp_;
 }
-inline void TxnMeta::set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp) {
+inline void TxnMeta::set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(timestamp_);
@@ -2358,32 +2358,32 @@ inline void MVCCWriteValueOp::set_allocated_key(::std::string* key) {
 inline bool MVCCWriteValueOp::has_timestamp() const {
   return this != internal_default_instance() && timestamp_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCWriteValueOp::_internal_timestamp() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCWriteValueOp::_internal_timestamp() const {
   return *timestamp_;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCWriteValueOp::timestamp() const {
-  const ::cockroach::util::hlc::Timestamp* p = timestamp_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCWriteValueOp::timestamp() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = timestamp_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.MVCCWriteValueOp.timestamp)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCWriteValueOp::release_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCWriteValueOp::release_timestamp() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.MVCCWriteValueOp.timestamp)
   
-  ::cockroach::util::hlc::Timestamp* temp = timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = timestamp_;
   timestamp_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCWriteValueOp::mutable_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCWriteValueOp::mutable_timestamp() {
   
   if (timestamp_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     timestamp_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.MVCCWriteValueOp.timestamp)
   return timestamp_;
 }
-inline void MVCCWriteValueOp::set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp) {
+inline void MVCCWriteValueOp::set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(timestamp_);
@@ -2567,32 +2567,32 @@ inline void MVCCWriteIntentOp::set_allocated_txn_key(::std::string* txn_key) {
 inline bool MVCCWriteIntentOp::has_timestamp() const {
   return this != internal_default_instance() && timestamp_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCWriteIntentOp::_internal_timestamp() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCWriteIntentOp::_internal_timestamp() const {
   return *timestamp_;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCWriteIntentOp::timestamp() const {
-  const ::cockroach::util::hlc::Timestamp* p = timestamp_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCWriteIntentOp::timestamp() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = timestamp_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.MVCCWriteIntentOp.timestamp)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCWriteIntentOp::release_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCWriteIntentOp::release_timestamp() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.MVCCWriteIntentOp.timestamp)
   
-  ::cockroach::util::hlc::Timestamp* temp = timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = timestamp_;
   timestamp_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCWriteIntentOp::mutable_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCWriteIntentOp::mutable_timestamp() {
   
   if (timestamp_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     timestamp_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.MVCCWriteIntentOp.timestamp)
   return timestamp_;
 }
-inline void MVCCWriteIntentOp::set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp) {
+inline void MVCCWriteIntentOp::set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(timestamp_);
@@ -2670,32 +2670,32 @@ inline void MVCCUpdateIntentOp::set_allocated_txn_id(::std::string* txn_id) {
 inline bool MVCCUpdateIntentOp::has_timestamp() const {
   return this != internal_default_instance() && timestamp_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCUpdateIntentOp::_internal_timestamp() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCUpdateIntentOp::_internal_timestamp() const {
   return *timestamp_;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCUpdateIntentOp::timestamp() const {
-  const ::cockroach::util::hlc::Timestamp* p = timestamp_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCUpdateIntentOp::timestamp() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = timestamp_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.MVCCUpdateIntentOp.timestamp)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCUpdateIntentOp::release_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCUpdateIntentOp::release_timestamp() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.MVCCUpdateIntentOp.timestamp)
   
-  ::cockroach::util::hlc::Timestamp* temp = timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = timestamp_;
   timestamp_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCUpdateIntentOp::mutable_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCUpdateIntentOp::mutable_timestamp() {
   
   if (timestamp_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     timestamp_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.MVCCUpdateIntentOp.timestamp)
   return timestamp_;
 }
-inline void MVCCUpdateIntentOp::set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp) {
+inline void MVCCUpdateIntentOp::set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(timestamp_);
@@ -2826,32 +2826,32 @@ inline void MVCCCommitIntentOp::set_allocated_key(::std::string* key) {
 inline bool MVCCCommitIntentOp::has_timestamp() const {
   return this != internal_default_instance() && timestamp_ != NULL;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCCommitIntentOp::_internal_timestamp() const {
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCCommitIntentOp::_internal_timestamp() const {
   return *timestamp_;
 }
-inline const ::cockroach::util::hlc::Timestamp& MVCCCommitIntentOp::timestamp() const {
-  const ::cockroach::util::hlc::Timestamp* p = timestamp_;
+inline const ::cockroach::util::hlc::hlcpb::Timestamp& MVCCCommitIntentOp::timestamp() const {
+  const ::cockroach::util::hlc::hlcpb::Timestamp* p = timestamp_;
   // @@protoc_insertion_point(field_get:cockroach.storage.engine.enginepb.MVCCCommitIntentOp.timestamp)
-  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::Timestamp*>(
-      &::cockroach::util::hlc::_Timestamp_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::cockroach::util::hlc::hlcpb::Timestamp*>(
+      &::cockroach::util::hlc::hlcpb::_Timestamp_default_instance_);
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCCommitIntentOp::release_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCCommitIntentOp::release_timestamp() {
   // @@protoc_insertion_point(field_release:cockroach.storage.engine.enginepb.MVCCCommitIntentOp.timestamp)
   
-  ::cockroach::util::hlc::Timestamp* temp = timestamp_;
+  ::cockroach::util::hlc::hlcpb::Timestamp* temp = timestamp_;
   timestamp_ = NULL;
   return temp;
 }
-inline ::cockroach::util::hlc::Timestamp* MVCCCommitIntentOp::mutable_timestamp() {
+inline ::cockroach::util::hlc::hlcpb::Timestamp* MVCCCommitIntentOp::mutable_timestamp() {
   
   if (timestamp_ == NULL) {
-    auto* p = CreateMaybeMessage<::cockroach::util::hlc::Timestamp>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::cockroach::util::hlc::hlcpb::Timestamp>(GetArenaNoVirtual());
     timestamp_ = p;
   }
   // @@protoc_insertion_point(field_mutable:cockroach.storage.engine.enginepb.MVCCCommitIntentOp.timestamp)
   return timestamp_;
 }
-inline void MVCCCommitIntentOp::set_allocated_timestamp(::cockroach::util::hlc::Timestamp* timestamp) {
+inline void MVCCCommitIntentOp::set_allocated_timestamp(::cockroach::util::hlc::hlcpb::Timestamp* timestamp) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete reinterpret_cast< ::google::protobuf::MessageLite*>(timestamp_);

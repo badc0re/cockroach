@@ -17,7 +17,7 @@ package cockroach.roachpb;
 option go_package = "roachpb";
 
 import "roachpb/metadata.proto";
-import "util/hlc/timestamp.proto";
+import "util/hlc/hlcpb/timestamp.proto";
 import "gogoproto/gogo.proto";
 
 // RaftTruncatedState contains metadata about the truncated portion of the raft log.
@@ -45,7 +45,7 @@ message RaftSnapshotData {
   message KeyValue {
     optional bytes key = 1;
     optional bytes value = 2;
-    optional util.hlc.Timestamp timestamp = 3 [(gogoproto.nullable) = false];
+    optional util.hlc.hlcpb.Timestamp timestamp = 3 [(gogoproto.nullable) = false];
   }
   // The latest RangeDescriptor
   optional RangeDescriptor range_descriptor = 1 [(gogoproto.nullable) = false];
