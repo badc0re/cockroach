@@ -45,7 +45,7 @@ type Scanner struct {
 	lastError *scanErr
 
 	// stmts contains the list of statements at the end of parsing.
-	stmts []tree.Statement
+	stmts []ast.Statement
 
 	initialized bool
 }
@@ -750,7 +750,7 @@ func (s *Scanner) scanNumber(lval *sqlSymType, ch int) {
 			lval.str = fmt.Sprintf("could not make constant float from literal %q", lval.str)
 			return
 		}
-		lval.union.val = &tree.NumVal{Value: floatConst, OrigString: lval.str}
+		lval.union.val = &ast.NumVal{Value: floatConst, OrigString: lval.str}
 	} else {
 		if isHex && s.pos == start+2 {
 			lval.id = ERROR
@@ -775,7 +775,7 @@ func (s *Scanner) scanNumber(lval *sqlSymType, ch int) {
 			lval.str = fmt.Sprintf("could not make constant int from literal %q", lval.str)
 			return
 		}
-		lval.union.val = &tree.NumVal{Value: intConst, OrigString: lval.str}
+		lval.union.val = &ast.NumVal{Value: intConst, OrigString: lval.str}
 	}
 }
 

@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/cockroachdb/cockroach/pkg/sql/ast"
 	"github.com/cockroachdb/cockroach/pkg/sql/coltypes"
 	"github.com/cockroachdb/cockroach/pkg/sql/lex"
 	"github.com/cockroachdb/cockroach/pkg/sql/sem/types"
@@ -26,12 +27,7 @@ import (
 
 // Expr represents an expression.
 type Expr interface {
-	fmt.Stringer
-	NodeFormatter
-	// Walk recursively walks all children using WalkExpr. If any children are changed, it returns a
-	// copy of this node updated to point to the new children. Otherwise the receiver is returned.
-	// For childless (leaf) Exprs, its implementation is empty.
-	Walk(Visitor) Expr
+	ast.Expr
 	// TypeCheck transforms the Expr into a well-typed TypedExpr, which further permits
 	// evaluation and type introspection, or an error if the expression cannot be well-typed.
 	// When type checking is complete, if no error was reported, the expression and all
@@ -81,22 +77,6 @@ var _ VariableExpr = &UnresolvedName{}
 var _ VariableExpr = &AllColumnsSelector{}
 var _ VariableExpr = &ColumnItem{}
 
-// operatorExpr is used to identify expression types that involve operators;
-// used by exprStrWithParen.
-type operatorExpr interface {
-	Expr
-	operatorExpr()
-}
-
-var _ operatorExpr = &AndExpr{}
-var _ operatorExpr = &OrExpr{}
-var _ operatorExpr = &NotExpr{}
-var _ operatorExpr = &BinaryExpr{}
-var _ operatorExpr = &UnaryExpr{}
-var _ operatorExpr = &ComparisonExpr{}
-var _ operatorExpr = &RangeCond{}
-var _ operatorExpr = &IsOfTypeExpr{}
-
 // Operator is used to identify Operators; used in sql.y.
 type Operator interface {
 	operator()
@@ -105,20 +85,6 @@ type Operator interface {
 var _ Operator = UnaryOperator(0)
 var _ Operator = BinaryOperator(0)
 var _ Operator = ComparisonOperator(0)
-
-// exprFmtWithParen is a variant of Format() which adds a set of outer parens
-// if the expression involves an operator. It is used internally when the
-// expression is part of another expression and we know it is preceded or
-// followed by an operator.
-func exprFmtWithParen(ctx *FmtCtx, e Expr) {
-	if _, ok := e.(operatorExpr); ok {
-		ctx.WriteByte('(')
-		ctx.FormatNode(e)
-		ctx.WriteByte(')')
-	} else {
-		ctx.FormatNode(e)
-	}
-}
 
 // typeAnnotation is an embeddable struct to provide a TypedExpr with a dynamic
 // type annotation.
@@ -140,40 +106,9 @@ func (ta typeAnnotation) assertTyped() {
 
 // AndExpr represents an AND expression.
 type AndExpr struct {
-	Left, Right Expr
+	ast.AndExpr
 
 	typeAnnotation
-}
-
-func (*AndExpr) operatorExpr() {}
-
-func binExprFmtWithParen(ctx *FmtCtx, e1 Expr, op string, e2 Expr, pad bool) {
-	exprFmtWithParen(ctx, e1)
-	if pad {
-		ctx.WriteByte(' ')
-	}
-	ctx.WriteString(op)
-	if pad {
-		ctx.WriteByte(' ')
-	}
-	exprFmtWithParen(ctx, e2)
-}
-
-func binExprFmtWithParenAndSubOp(ctx *FmtCtx, e1 Expr, subOp, op string, e2 Expr) {
-	exprFmtWithParen(ctx, e1)
-	ctx.WriteByte(' ')
-	if subOp != "" {
-		ctx.WriteString(subOp)
-		ctx.WriteByte(' ')
-	}
-	ctx.WriteString(op)
-	ctx.WriteByte(' ')
-	exprFmtWithParen(ctx, e2)
-}
-
-// Format implements the NodeFormatter interface.
-func (node *AndExpr) Format(ctx *FmtCtx) {
-	binExprFmtWithParen(ctx, node.Left, "AND", node.Right, true)
 }
 
 // NewTypedAndExpr returns a new AndExpr that is verified to be well-typed.
@@ -195,16 +130,9 @@ func (node *AndExpr) TypedRight() TypedExpr {
 
 // OrExpr represents an OR expression.
 type OrExpr struct {
-	Left, Right Expr
+	ast.OrExpr
 
 	typeAnnotation
-}
-
-func (*OrExpr) operatorExpr() {}
-
-// Format implements the NodeFormatter interface.
-func (node *OrExpr) Format(ctx *FmtCtx) {
-	binExprFmtWithParen(ctx, node.Left, "OR", node.Right, true)
 }
 
 // NewTypedOrExpr returns a new OrExpr that is verified to be well-typed.
@@ -253,16 +181,9 @@ func (node *NotExpr) TypedInnerExpr() TypedExpr {
 
 // ParenExpr represents a parenthesized expression.
 type ParenExpr struct {
-	Expr Expr
+	ast.ParenExpr
 
 	typeAnnotation
-}
-
-// Format implements the NodeFormatter interface.
-func (node *ParenExpr) Format(ctx *FmtCtx) {
-	ctx.WriteByte('(')
-	ctx.FormatNode(node.Expr)
-	ctx.WriteByte(')')
 }
 
 // TypedInnerExpr returns the ParenExpr's inner expression as a TypedExpr.
@@ -715,24 +636,9 @@ func (node MinVal) Format(ctx *FmtCtx) {
 
 // Placeholder represents a named placeholder.
 type Placeholder struct {
-	Name string
+	ast.Placeholder
 
 	typeAnnotation
-}
-
-// NewPlaceholder allocates a Placeholder.
-func NewPlaceholder(name string) *Placeholder {
-	return &Placeholder{Name: name}
-}
-
-// Format implements the NodeFormatter interface.
-func (node *Placeholder) Format(ctx *FmtCtx) {
-	if ctx.placeholderFormat != nil {
-		ctx.placeholderFormat(ctx, node)
-		return
-	}
-	ctx.WriteByte('$')
-	ctx.WriteString(node.Name)
 }
 
 // ResolvedType implements the TypedExpr interface.
@@ -863,20 +769,6 @@ func (node *ArrayFlatten) Format(ctx *FmtCtx) {
 	}
 }
 
-// Exprs represents a list of value expressions. It's not a valid expression
-// because it's not parenthesized.
-type Exprs []Expr
-
-// Format implements the NodeFormatter interface.
-func (node *Exprs) Format(ctx *FmtCtx) {
-	for i, n := range *node {
-		if i > 0 {
-			ctx.WriteString(", ")
-		}
-		ctx.FormatNode(n)
-	}
-}
-
 // TypedExprs represents a list of well-typed value expressions. It's not a valid expression
 // because it's not parenthesized.
 type TypedExprs []TypedExpr
@@ -893,8 +785,7 @@ func (node *TypedExprs) String() string {
 
 // Subquery represents a subquery.
 type Subquery struct {
-	Select SelectStatement
-	Exists bool
+	ast.Subquery
 
 	// Idx is a query-unique index for the subquery.
 	// Subqueries are 1-indexed to ensure that the default
@@ -912,117 +803,9 @@ func (node *Subquery) SetType(t types.T) {
 // Variable implements the VariableExpr interface.
 func (*Subquery) Variable() {}
 
-// Format implements the NodeFormatter interface.
-func (node *Subquery) Format(ctx *FmtCtx) {
-	if ctx.HasFlags(FmtSymbolicSubqueries) {
-		ctx.Printf("@S%d", node.Idx)
-	} else {
-		// Ensure that type printing is disabled during the recursion, as
-		// the type annotations are not available in subqueries.
-		noTypesCtx := *ctx
-		noTypesCtx.flags &= ^FmtShowTypes
-
-		if node.Exists {
-			noTypesCtx.WriteString("EXISTS ")
-		}
-		if node.Select == nil {
-			// If the subquery is generated by the optimizer, we
-			// don't have an actual statement.
-			noTypesCtx.WriteString("<unknown>")
-		} else {
-			noTypesCtx.FormatNode(node.Select)
-		}
-	}
-}
-
-// BinaryOperator represents a binary operator.
-type BinaryOperator int
-
-func (BinaryOperator) operator() {}
-
-// BinaryExpr.Operator
-const (
-	Bitand BinaryOperator = iota
-	Bitor
-	Bitxor
-	Plus
-	Minus
-	Mult
-	Div
-	FloorDiv
-	Mod
-	Pow
-	Concat
-	LShift
-	RShift
-	JSONFetchVal
-	JSONFetchText
-	JSONFetchValPath
-	JSONFetchTextPath
-
-	NumBinaryOperators
-)
-
-var binaryOpName = [...]string{
-	Bitand:            "&",
-	Bitor:             "|",
-	Bitxor:            "#",
-	Plus:              "+",
-	Minus:             "-",
-	Mult:              "*",
-	Div:               "/",
-	FloorDiv:          "//",
-	Mod:               "%",
-	Pow:               "^",
-	Concat:            "||",
-	LShift:            "<<",
-	RShift:            ">>",
-	JSONFetchVal:      "->",
-	JSONFetchText:     "->>",
-	JSONFetchValPath:  "#>",
-	JSONFetchTextPath: "#>>",
-}
-
-// binaryOpPrio follows the precedence order in the grammar. Used for pretty-printing.
-var binaryOpPrio = [...]int{
-	Pow:  1,
-	Mult: 2, Div: 2, FloorDiv: 2, Mod: 2,
-	Plus: 3, Minus: 3,
-	LShift: 4, RShift: 4,
-	Bitand: 5,
-	Bitxor: 6,
-	Bitor:  7,
-	Concat: 8, JSONFetchVal: 8, JSONFetchText: 8, JSONFetchValPath: 8, JSONFetchTextPath: 8,
-}
-
-// binaryOpFullyAssoc indicates whether an operator is fully associative.
-// Reminder: an op R is fully associative if (a R b) R c == a R (b R c)
-var binaryOpFullyAssoc = [...]bool{
-	Pow:  false,
-	Mult: true, Div: false, FloorDiv: false, Mod: false,
-	Plus: true, Minus: false,
-	LShift: false, RShift: false,
-	Bitand: true,
-	Bitxor: true,
-	Bitor:  true,
-	Concat: true, JSONFetchVal: false, JSONFetchText: false, JSONFetchValPath: false, JSONFetchTextPath: false,
-}
-
-func (i BinaryOperator) isPadded() bool {
-	return !(i == JSONFetchVal || i == JSONFetchText || i == JSONFetchValPath || i == JSONFetchTextPath)
-}
-
-func (i BinaryOperator) String() string {
-	if i < 0 || i > BinaryOperator(len(binaryOpName)-1) {
-		return fmt.Sprintf("BinaryOp(%d)", i)
-	}
-	return binaryOpName[i]
-}
-
 // BinaryExpr represents a binary value expression.
 type BinaryExpr struct {
-	Operator    BinaryOperator
-	Left, Right Expr
+	ast.BinaryExpr
 
 	typeAnnotation
 	fn *BinOp
@@ -1051,8 +834,6 @@ func NewTypedBinaryExpr(op BinaryOperator, left, right TypedExpr, typ types.T) *
 	node.memoizeFn()
 	return node
 }
-
-func (*BinaryExpr) operatorExpr() {}
 
 func (node *BinaryExpr) memoizeFn() {
 	leftRet, rightRet := node.Left.(TypedExpr).ResolvedType(), node.Right.(TypedExpr).ResolvedType()
@@ -1083,61 +864,12 @@ func newBinExprIfValidOverload(op BinaryOperator, left TypedExpr, right TypedExp
 	return nil
 }
 
-// Format implements the NodeFormatter interface.
-func (node *BinaryExpr) Format(ctx *FmtCtx) {
-	binExprFmtWithParen(ctx, node.Left, node.Operator.String(), node.Right, node.Operator.isPadded())
-}
-
-// UnaryOperator represents a unary operator.
-type UnaryOperator int
-
-func (UnaryOperator) operator() {}
-
-// UnaryExpr.Operator
-const (
-	UnaryMinus UnaryOperator = iota
-	UnaryComplement
-
-	NumUnaryOperators
-)
-
-var unaryOpName = [...]string{
-	UnaryMinus:      "-",
-	UnaryComplement: "~",
-}
-
-func (i UnaryOperator) String() string {
-	if i < 0 || i > UnaryOperator(len(unaryOpName)-1) {
-		return fmt.Sprintf("UnaryOp(%d)", i)
-	}
-	return unaryOpName[i]
-}
-
 // UnaryExpr represents a unary value expression.
 type UnaryExpr struct {
-	Operator UnaryOperator
-	Expr     Expr
+	ast.UnaryExpr
 
 	typeAnnotation
 	fn *UnaryOp
-}
-
-func (*UnaryExpr) operatorExpr() {}
-
-// Format implements the NodeFormatter interface.
-func (node *UnaryExpr) Format(ctx *FmtCtx) {
-	ctx.WriteString(node.Operator.String())
-	e := node.Expr
-	_, isOp := e.(operatorExpr)
-	_, isDatum := e.(Datum)
-	_, isConstant := e.(Constant)
-	if isOp || (node.Operator == UnaryMinus && (isDatum || isConstant)) {
-		ctx.WriteByte('(')
-		ctx.FormatNode(e)
-		ctx.WriteByte(')')
-	} else {
-		ctx.FormatNode(e)
-	}
 }
 
 // TypedInnerExpr returns the UnaryExpr's inner expression as a TypedExpr.
@@ -1162,12 +894,7 @@ func NewTypedUnaryExpr(op UnaryOperator, expr TypedExpr, typ types.T) *UnaryExpr
 
 // FuncExpr represents a function call.
 type FuncExpr struct {
-	Func  ResolvableFunctionReference
-	Type  funcType
-	Exprs Exprs
-	// Filter is used for filters on aggregates: SUM(k) FILTER (WHERE k > 0)
-	Filter    Expr
-	WindowDef *WindowDef
+	ast.FuncExpr
 
 	typeAnnotation
 	fnProps *FunctionProperties
@@ -1259,64 +986,6 @@ func (node *FuncExpr) IsImpure() bool {
 // IsDistSQLBlacklist returns whether the function is not supported by DistSQL.
 func (node *FuncExpr) IsDistSQLBlacklist() bool {
 	return node.fnProps != nil && node.fnProps.DistsqlBlacklist
-}
-
-type funcType int
-
-// FuncExpr.Type
-const (
-	_ funcType = iota
-	DistinctFuncType
-	AllFuncType
-)
-
-var funcTypeName = [...]string{
-	DistinctFuncType: "DISTINCT",
-	AllFuncType:      "ALL",
-}
-
-// Format implements the NodeFormatter interface.
-func (node *FuncExpr) Format(ctx *FmtCtx) {
-	var typ string
-	if node.Type != 0 {
-		typ = funcTypeName[node.Type] + " "
-	}
-
-	// We need to remove name anonymization for the function name in
-	// particular. Do this by overriding the flags.
-	subCtx := ctx.CopyWithFlags(ctx.flags & ^FmtAnonymize)
-	subCtx.FormatNode(&node.Func)
-
-	ctx.WriteByte('(')
-	ctx.WriteString(typ)
-	ctx.FormatNode(&node.Exprs)
-	ctx.WriteByte(')')
-	if ctx.HasFlags(FmtParsable) && node.typ != nil {
-		if node.fnProps.AmbiguousReturnType {
-			if typ, err := coltypes.DatumTypeToColumnType(node.typ); err == nil {
-				// There's no type annotation available for tuples.
-				// TODO(jordan,knz): clean this up. AmbiguousReturnType should be set only
-				// when we should and can put an annotation here. #28579
-				if _, ok := typ.(coltypes.TTuple); !ok {
-					ctx.WriteString(":::")
-					ctx.WriteString(typ.TypeName())
-				}
-			}
-		}
-	}
-	if node.Filter != nil {
-		ctx.WriteString(" FILTER (WHERE ")
-		ctx.FormatNode(node.Filter)
-		ctx.WriteString(")")
-	}
-	if window := node.WindowDef; window != nil {
-		ctx.WriteString(" OVER ")
-		if window.Name != "" {
-			ctx.FormatNode(&window.Name)
-		} else {
-			ctx.FormatNode(window)
-		}
-	}
 }
 
 // CaseExpr represents a CASE expression.

@@ -33,6 +33,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/internal/client"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/settings/cluster"
+	"github.com/cockroachdb/cockroach/pkg/sql/ast"
 	"github.com/cockroachdb/cockroach/pkg/sql/coltypes"
 	"github.com/cockroachdb/cockroach/pkg/sql/lex"
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
@@ -2324,7 +2325,7 @@ func (e *MultipleResultsError) Error() string {
 type EvalDatabase interface {
 	// ParseQualifiedTableName parses a SQL string of the form
 	// `[ database_name . ] [ schema_name . ] table_name`.
-	ParseQualifiedTableName(ctx context.Context, sql string) (*TableName, error)
+	ParseQualifiedTableName(ctx context.Context, sql string) (*ast.TableName, error)
 
 	// ResolveTableName expands the given table name and
 	// makes it point to a valid object.

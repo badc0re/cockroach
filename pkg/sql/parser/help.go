@@ -88,7 +88,7 @@ func helpWith(sqllex sqlLexer, helpText string) int {
 // helpWithFunction is to be used in parser actions to mark the parser
 // "in error", with the error set to a contextual help message about
 // the current built-in function.
-func helpWithFunction(sqllex sqlLexer, f tree.ResolvableFunctionReference) int {
+func helpWithFunction(sqllex sqlLexer, f ast.ResolvableFunctionReference) int {
 	d, err := f.Resolve(sessiondata.SearchPath{})
 	if err != nil {
 		return 1
@@ -111,7 +111,7 @@ func helpWithFunction(sqllex sqlLexer, f tree.ResolvableFunctionReference) int {
 	// together.
 	lastInfo := ""
 	for i, overload := range d.Definition {
-		b := overload.(*tree.Overload)
+		b := overload.(*ast.Overload)
 		if b.Info != "" && b.Info != lastInfo {
 			if i > 0 {
 				fmt.Fprintln(w, "---")
@@ -121,7 +121,7 @@ func helpWithFunction(sqllex sqlLexer, f tree.ResolvableFunctionReference) int {
 		}
 		lastInfo = b.Info
 
-		simplifyRet := d.Class == tree.GeneratorClass
+		simplifyRet := d.Class == ast.GeneratorClass
 		fmt.Fprintf(w, "%s%s\n", d.Name, b.Signature(simplifyRet))
 	}
 	_ = w.Flush()
@@ -132,8 +132,8 @@ func helpWithFunction(sqllex sqlLexer, f tree.ResolvableFunctionReference) int {
 }
 
 func helpWithFunctionByName(sqllex sqlLexer, s string) int {
-	un := &tree.UnresolvedName{NumParts: 1, Parts: tree.NameParts{s}}
-	return helpWithFunction(sqllex, tree.ResolvableFunctionReference{FunctionReference: un})
+	un := &ast.UnresolvedName{NumParts: 1, Parts: ast.NameParts{s}}
+	return helpWithFunction(sqllex, ast.ResolvableFunctionReference{FunctionReference: un})
 }
 
 const (

@@ -29,7 +29,6 @@ import (
 
 	"github.com/cockroachdb/cockroach/pkg/sql/coltypes"
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
-	"github.com/cockroachdb/cockroach/pkg/sql/sem/tree"
 )
 
 // Parser wraps a scanner, parser and other utilities present in the parser
@@ -40,11 +39,11 @@ type Parser struct {
 }
 
 // Parse parses the sql and returns a list of statements.
-func (p *Parser) Parse(sql string) (stmts tree.StatementList, err error) {
+func (p *Parser) Parse(sql string) (stmts ast.StatementList, err error) {
 	return parseWithDepth(1, sql)
 }
 
-func (p *Parser) parseWithDepth(depth int, sql string) (stmts tree.StatementList, err error) {
+func (p *Parser) parseWithDepth(depth int, sql string) (stmts ast.StatementList, err error) {
 	p.scanner.init(sql)
 	if p.parserImpl.Parse(&p.scanner) != 0 {
 		var err *pgerror.Error
@@ -65,29 +64,29 @@ func (p *Parser) parseWithDepth(depth int, sql string) (stmts tree.StatementList
 // them instead of wrapping in an UnaryExpr. This in turn ensures
 // that negative numbers get considered as a single constant
 // for the purpose of formatting and scrubbing.
-func unaryNegation(e tree.Expr) tree.Expr {
-	if cst, ok := e.(*tree.NumVal); ok {
+func unaryNegation(e ast.Expr) ast.Expr {
+	if cst, ok := e.(*ast.NumVal); ok {
 		cst.Negative = !cst.Negative
 		return cst
 	}
 
 	// Common case.
-	return &tree.UnaryExpr{Operator: tree.UnaryMinus, Expr: e}
+	return &ast.UnaryExpr{Operator: ast.UnaryMinus, Expr: e}
 }
 
 // Parse parses a sql statement string and returns a list of Statements.
-func Parse(sql string) (tree.StatementList, error) {
+func Parse(sql string) (ast.StatementList, error) {
 	return parseWithDepth(1, sql)
 }
 
-func parseWithDepth(depth int, sql string) (tree.StatementList, error) {
+func parseWithDepth(depth int, sql string) (ast.StatementList, error) {
 	var p Parser
 	return p.parseWithDepth(depth+1, sql)
 }
 
 // ParseOne parses a sql statement string, ensuring that it contains only a
 // single statement, and returns that Statement.
-func ParseOne(sql string) (tree.Statement, error) {
+func ParseOne(sql string) (ast.Statement, error) {
 	stmts, err := parseWithDepth(1, sql)
 	if err != nil {
 		return nil, err
@@ -99,29 +98,29 @@ func ParseOne(sql string) (tree.Statement, error) {
 }
 
 // ParseTableNameWithIndex parses a table name with index.
-func ParseTableNameWithIndex(sql string) (tree.TableNameWithIndex, error) {
+func ParseTableNameWithIndex(sql string) (ast.TableNameWithIndex, error) {
 	// We wrap the name we want to parse into a dummy statement since our parser
 	// can only parse full statements.
 	stmt, err := ParseOne(fmt.Sprintf("ALTER INDEX %s RENAME TO x", sql))
 	if err != nil {
-		return tree.TableNameWithIndex{}, err
+		return ast.TableNameWithIndex{}, err
 	}
-	rename, ok := stmt.(*tree.RenameIndex)
+	rename, ok := stmt.(*ast.RenameIndex)
 	if !ok {
-		return tree.TableNameWithIndex{}, pgerror.NewAssertionErrorf("expected an ALTER INDEX statement, but found %T", stmt)
+		return ast.TableNameWithIndex{}, pgerror.NewAssertionErrorf("expected an ALTER INDEX statement, but found %T", stmt)
 	}
 	return *rename.Index, nil
 }
 
 // ParseTableName parses a table name.
-func ParseTableName(sql string) (*tree.TableName, error) {
+func ParseTableName(sql string) (*ast.TableName, error) {
 	// We wrap the name we want to parse into a dummy statement since our parser
 	// can only parse full statements.
 	stmt, err := ParseOne(fmt.Sprintf("ALTER TABLE %s RENAME TO x", sql))
 	if err != nil {
 		return nil, err
 	}
-	rename, ok := stmt.(*tree.RenameTable)
+	rename, ok := stmt.(*ast.RenameTable)
 	if !ok {
 		return nil, pgerror.NewAssertionErrorf("expected an ALTER TABLE statement, but found %T", stmt)
 	}
@@ -129,12 +128,12 @@ func ParseTableName(sql string) (*tree.TableName, error) {
 }
 
 // parseExprs parses one or more sql expressions.
-func parseExprs(exprs []string) (tree.Exprs, error) {
+func parseExprs(exprs []string) (ast.Exprs, error) {
 	stmt, err := ParseOne(fmt.Sprintf("SET ROW (%s)", strings.Join(exprs, ",")))
 	if err != nil {
 		return nil, err
 	}
-	set, ok := stmt.(*tree.SetVar)
+	set, ok := stmt.(*ast.SetVar)
 	if !ok {
 		return nil, pgerror.NewAssertionErrorf("expected a SET statement, but found %T", stmt)
 	}
@@ -142,15 +141,15 @@ func parseExprs(exprs []string) (tree.Exprs, error) {
 }
 
 // ParseExprs is a short-hand for parseExprs(sql)
-func ParseExprs(sql []string) (tree.Exprs, error) {
+func ParseExprs(sql []string) (ast.Exprs, error) {
 	if len(sql) == 0 {
-		return tree.Exprs{}, nil
+		return ast.Exprs{}, nil
 	}
 	return parseExprs(sql)
 }
 
 // ParseExpr is a short-hand for parseExprs([]string{sql})
-func ParseExpr(sql string) (tree.Expr, error) {
+func ParseExpr(sql string) (ast.Expr, error) {
 	exprs, err := parseExprs([]string{sql})
 	if err != nil {
 		return nil, err
@@ -168,7 +167,7 @@ func ParseType(sql string) (coltypes.CastTargetType, error) {
 		return nil, err
 	}
 
-	cast, ok := expr.(*tree.CastExpr)
+	cast, ok := expr.(*ast.CastExpr)
 	if !ok {
 		return nil, pgerror.NewAssertionErrorf("expected a tree.CastExpr, but found %T", expr)
 	}
