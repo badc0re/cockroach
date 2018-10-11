@@ -26,11 +26,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"fmt"
-	"net"
 	"os"
 	"strings"
+
+	"github.com/cockroachdb/cockroach/pkg/cmd/cmp-protocol/pgconnect"
+	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgwirebase"
 )
 
 var postgresAddr = flag.String("addr", "localhost:5432", "Postgres server address")
@@ -286,56 +289,7 @@ var arrayDecimalInputs = []string{
 
 func makeEncodingFunc(typName string) generateEnc {
 	return func(addr, val string) ([]byte, error) {
-		conn, err := net.Dial("tcp", addr)
-		if err != nil {
-			return nil, err
-		}
-		defer conn.Close()
-
-		read := func() ([]byte, error) {
-			buf := make([]byte, 1024)
-			n, err := conn.Read(buf)
-			return buf[:n], err
-		}
-
-		connect := []byte{0, 0, 0, 41, 0, 3, 0, 0, 117, 115, 101, 114, 0, 112, 111, 115, 116, 103, 114, 101, 115, 0, 100, 97, 116, 97, 98, 97, 115, 101, 0, 112, 111, 115, 116, 103, 114, 101, 115, 0, 0}
-		if _, err := conn.Write(connect); err != nil {
-			return nil, err
-		}
-		if b, err := read(); err != nil {
-			panic(fmt.Errorf("%s: %q", err, b))
-		}
-
-		q := fmt.Sprintf("SELECT '%s'::%s", val, typName)
-		var buf bytes.Buffer
-		buf.WriteByte(0) // destination prepared statement
-		buf.WriteString(q)
-		buf.WriteByte(0) // string NUL
-		buf.WriteByte(0) // MSB number of parameters
-		buf.WriteByte(0) // LSB number of parameters
-		{
-			b := append([]byte{'P', 0, 0, 0, byte(4 + buf.Len())}, buf.Bytes()...)
-			b = append(b, []byte{68, 0, 0, 0, 6, 83, 0, 83, 0, 0, 0, 4}...) // DESCRIBE
-			if _, err := conn.Write(b); err != nil {
-				return nil, err
-			}
-		}
-		if b, err := read(); err != nil {
-			panic(fmt.Errorf("%s: %q", err, b))
-		}
-
-		bindExec := []byte{66, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 69, 0, 0, 0, 9, 0, 0, 0, 0, 0, 83, 0, 0, 0, 4}
-		if _, err := conn.Write(bindExec); err != nil {
-			return nil, err
-		}
-		if b, err := read(); err != nil {
-			return b, err
-		} else if !bytes.Equal(b[:6], []byte{50, 0, 0, 0, 4, 68}) {
-			return nil, fmt.Errorf("unexpected: %v, %s", b, b)
-		} else {
-			idx := 12
-			end := bytes.LastIndex(b, []byte{67, 0, 0, 0})
-			return b[idx:end], nil
-		}
+		q := fmt.Sprintf("SELECT %s", val)
+		return pgconnect.Connect(context.Background(), q, addr, "postgres", pgwirebase.FormatBinary)
 	}
 }
