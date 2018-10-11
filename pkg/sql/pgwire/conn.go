@@ -320,6 +320,7 @@ func (c *conn) serveImpl(
 
 Loop:
 	for {
+		fmt.Println("START FOR")
 		var typ pgwirebase.ClientMessageType
 		var n int
 		typ, n, err = c.readBuf.ReadTypedMsg(&c.rd)
@@ -331,6 +332,7 @@ Loop:
 			log.Infof(ctx, "pgwire: processing %s", typ)
 		}
 		timeReceived := timeutil.Now()
+		fmt.Println("TYP", typ)
 		switch typ {
 		case pgwirebase.ClientMsgSimpleQuery:
 			if doingExtendedQueryMessage {

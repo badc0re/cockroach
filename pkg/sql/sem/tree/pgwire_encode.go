@@ -16,6 +16,7 @@ package tree
 
 import (
 	"bytes"
+	"strings"
 	"unicode"
 
 	"github.com/cockroachdb/cockroach/pkg/util/stringencoding"
@@ -108,21 +109,23 @@ func (d *DArray) pgwireFormat(ctx *FmtCtx) {
 }
 
 func pgwireFormatStringInArray(buf *bytes.Buffer, in string) {
-	// TODO(knz): to be fully pg-compliant, this function should avoid
-	// enclosing the string in double quotes if there is no special
-	// character inside.
-	buf.WriteByte('"')
+	quote := in == "" || (len(in) == 4 && strings.ToLower(in) == "null") || in[0] == ' ' || in[len(in)-1] == ' ' || strings.ContainsAny(in, `{},"\`)
+	if quote {
+		buf.WriteByte('"')
+	}
 	// Loop through each unicode code point.
 	for i, r := range in {
 		if r == '"' || r == '\\' {
 			// Strings in arrays escape " and \.
 			buf.WriteByte('\\')
 			buf.WriteByte(byte(r))
-		} else if unicode.IsGraphic(r) {
+		} else if unicode.IsGraphic(r) || true {
 			buf.WriteRune(r)
 		} else {
 			stringencoding.EncodeChar(buf, in, r, i)
 		}
 	}
-	buf.WriteByte('"')
+	if quote {
+		buf.WriteByte('"')
+	}
 }
