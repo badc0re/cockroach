@@ -39,6 +39,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/util/hlc"
 	"github.com/cockroachdb/cockroach/pkg/util/interval"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
+	"github.com/cockroachdb/cockroach/pkg/util/log/logger"
 	"github.com/cockroachdb/cockroach/pkg/util/protoutil"
 	"github.com/cockroachdb/cockroach/pkg/util/timeutil"
 	"github.com/cockroachdb/cockroach/pkg/util/uuid"
@@ -810,10 +811,11 @@ func (t Transaction) Clone() Transaction {
 
 // AssertInitialized crashes if the transaction is not initialized.
 func (t *Transaction) AssertInitialized(ctx context.Context) {
+	logger.LogFromCtx(ctx).Fatalf(ctx, "we done: %s", t)
 	if t.ID == (uuid.UUID{}) ||
 		t.OrigTimestamp == (hlc.Timestamp{}) ||
 		t.Timestamp == (hlc.Timestamp{}) {
-		log.Fatalf(ctx, "uninitialized txn: %s", t)
+		logger.LogFromCtx(ctx).Fatalf(ctx, "uninitialized txn: %s", t)
 	}
 }
 
@@ -1104,11 +1106,11 @@ func PrepareTransactionForRetry(
 	ctx context.Context, pErr *Error, pri UserPriority, clock *hlc.Clock,
 ) Transaction {
 	if pErr.TransactionRestart == TransactionRestart_NONE {
-		log.Fatalf(ctx, "invalid retryable err (%T): %s", pErr.GetDetail(), pErr)
+		logger.LogFromCtx(ctx).Fatalf(ctx, "invalid retryable err (%T): %s", pErr.GetDetail(), pErr)
 	}
 
 	if pErr.GetTxn() == nil {
-		log.Fatalf(ctx, "missing txn for retryable error: %s", pErr)
+		logger.LogFromCtx(ctx).Fatalf(ctx, "missing txn for retryable error: %s", pErr)
 	}
 
 	txn := pErr.GetTxn().Clone()
@@ -1156,7 +1158,7 @@ func PrepareTransactionForRetry(
 		// Increase the timestamp to the ts at which we've actually written.
 		txn.Timestamp.Forward(writeTooOldRetryTimestamp(&txn, tErr))
 	default:
-		log.Fatalf(ctx, "invalid retryable err (%T): %s", pErr.GetDetail(), pErr)
+		logger.LogFromCtx(ctx).Fatalf(ctx, "invalid retryable err (%T): %s", pErr.GetDetail(), pErr)
 	}
 	if !aborted {
 		txn.Restart(pri, txn.Priority, txn.Timestamp)

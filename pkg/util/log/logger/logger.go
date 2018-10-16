@@ -30,3 +30,13 @@ type Log interface {
 	// Warningf logs to the WARNING and INFO logs.
 	Warningf(ctx context.Context, format string, args ...interface{})
 }
+
+type ctxLogKey struct{}
+
+func AnnotateCtx(ctx context.Context, log Log) context.Context {
+	return context.WithValue(ctx, ctxLogKey{}, log)
+}
+
+func LogFromCtx(ctx context.Context) Log {
+	return ctx.Value(ctxLogKey{}).(Log)
+}

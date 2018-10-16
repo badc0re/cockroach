@@ -21,6 +21,7 @@ import (
 
 	opentracing "github.com/opentracing/opentracing-go"
 
+	"github.com/cockroachdb/cockroach/pkg/util/log/logger"
 	"github.com/cockroachdb/cockroach/pkg/util/log/logtags"
 	"github.com/cockroachdb/cockroach/pkg/util/tracing"
 )
@@ -143,6 +144,9 @@ func (ac *AmbientContext) ResetAndAnnotateCtx(ctx context.Context) context.Conte
 		if ac.tags != nil {
 			ctx = logtags.WithTags(ctx, ac.tags)
 		}
+		if logger.LogFromCtx(ctx) == nil {
+			ctx = logger.AnnotateCtx(ctx, Logger)
+		}
 		return ctx
 	}
 }
@@ -153,6 +157,9 @@ func (ac *AmbientContext) annotateCtxInternal(ctx context.Context) context.Conte
 	}
 	if ac.tags != nil {
 		ctx = logtags.AddTags(ctx, ac.tags)
+	}
+	if logger.LogFromCtx(ctx) == nil {
+		ctx = logger.AnnotateCtx(ctx, Logger)
 	}
 	return ctx
 }
