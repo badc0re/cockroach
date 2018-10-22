@@ -166,19 +166,6 @@ func ExportStorageFromURI(
 	return MakeExportStorage(ctx, conf, settings)
 }
 
-// SanitizeExportStorageURI returns the export storage URI with sensitive
-// credentials stripped.
-func SanitizeExportStorageURI(path string) (string, error) {
-	uri, err := url.Parse(path)
-	if err != nil {
-		return "", err
-	}
-	// All current export storage providers store credentials in the query string,
-	// if they store it in the URI at all.
-	uri.RawQuery = ""
-	return uri.String(), nil
-}
-
 // MakeExportStorage creates an ExportStorage from the given config.
 func MakeExportStorage(
 	ctx context.Context, dest roachpb.ExportStorage, settings *cluster.Settings,

@@ -14,6 +14,8 @@
 
 package tree
 
+import "net/url"
+
 // Export represents a EXPORT statement.
 type Export struct {
 	Query      *Select
@@ -29,11 +31,30 @@ func (node *Export) Format(ctx *FmtCtx) {
 	ctx.WriteString("EXPORT INTO ")
 	ctx.WriteString(node.FileFormat)
 	ctx.WriteString(" ")
-	ctx.FormatNode(node.File)
+	SanitizeExportStorageURI(ctx, node.File)
 	if node.Options != nil {
 		ctx.WriteString(" WITH ")
 		ctx.FormatNode(&node.Options)
 	}
 	ctx.WriteString(" FROM ")
 	ctx.FormatNode(node.Query)
+}
+
+// SanitizeExportStorageURI returns the export storage URI with sensitive
+// credentials stripped.
+func SanitizeExportStorageURI(ctx *FmtCtx, file Expr) {
+	if !ctx.flags.HasFlags(FmtShowPasswords) {
+		ctx.FormatNode(file)
+		return
+	}
+	path := AsString(file)
+	uri, err := url.Parse(path)
+	if err != nil {
+		ctx.FormatNode(file)
+		return
+	}
+	// All current export storage providers store credentials in the query string,
+	// if they store it in the URI at all.
+	uri.RawQuery = ""
+	ctx.WriteString(uri.String())
 }
