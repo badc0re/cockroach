@@ -219,6 +219,17 @@ func TestBinaryDecimalArray(t *testing.T) {
 	})
 }
 
+func TestBinaryBitArray(t *testing.T) {
+	defer leaktest.AfterTest(t)()
+	testBinaryDatumType(t, "bit_array", func(val string) tree.Datum {
+		ary, err := tree.ParseDBitArray(val[2 : len(val)-1])
+		if err != nil {
+			t.Fatal(err)
+		}
+		return ary
+	})
+}
+
 func TestBinaryIntArray(t *testing.T) {
 	defer leaktest.AfterTest(t)()
 	buf := writeBuffer{bytecount: metric.NewCounter(metric.Metadata{})}
