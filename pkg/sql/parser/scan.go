@@ -48,6 +48,8 @@ type Scanner struct {
 	stmts []tree.Statement
 
 	initialized bool
+
+	cs int
 }
 
 // scanErr holds error state for a Scanner.
@@ -232,7 +234,7 @@ func (s *Scanner) populateHelpMsg(msg string) {
 	s.lastError.hint = msg
 }
 
-func (s *Scanner) scan(lval *sqlSymType) {
+func (s *Scanner) scanOld(lval *sqlSymType) {
 	lval.id = 0
 	lval.pos = s.pos
 	lval.str = "EOF"
