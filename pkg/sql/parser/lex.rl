@@ -139,31 +139,21 @@ func (sc *Scanner) scan(lval *sqlSymType) {
 			identStart
 			(identStart | digit | '$')*
 			;
-		identQuote =
-			'"'
-			(
-				'""' %{ numQuote++ }
-				| notASCII
-				| /[^"]/
-			)*
-			'"'
-			;
 		action identQuote {
 			if numQuote != 0 {
-				b = make([]byte, p-mark-2-numQuote)
+				b = make([]byte, p-mark-1-numQuote)
 				// Now use numQuote as an index into b.
 				numQuote = 0
-				for i := mark+1; i < p-1; i++ {
+				for i := mark+1; i < p; i++ {
 					b[numQuote] = data[i]
 					numQuote++
 					if data[i] == '"' {
 						i++
 					}
 				}
-				s = string(b)
 				numQuote = 0
 			} else {
-				b = []byte(data[mark+1:p-1])
+				b = []byte(data[mark+1:p])
 			}
 			if isNotASCII {
 				if !utf8.Valid(b) {
@@ -172,7 +162,19 @@ func (sc *Scanner) scan(lval *sqlSymType) {
 				}
 				isNotASCII = false
 			}
-			emit(lex.IDENT, string(b)); return
+			s += string(b)
+		}
+		identQuote =
+			'"' >mark >{fmt.Println("mark quote", string(data[p]))}
+			(
+				'""' %{ numQuote++ }
+				| notASCII
+				| /[^"]/
+			)* %identQuote
+			'"'
+			;
+		action emitIdent {
+			emit(lex.IDENT, s); return
 		}
 		singleQuote =
 			"'"
@@ -303,7 +305,9 @@ func (sc *Scanner) scan(lval *sqlSymType) {
 			}
 			| placeholder >mark %placeholder
 			| ident >mark %ident
-			| identQuote >mark %identQuote
+			| identQuote >{s = ""}
+				(space* '\n' space* identQuote)*
+				%emitIdent
 			| singleQuote >mark %singleQuote
 			| bytes %bytes
 			| escapedString %escapedString
